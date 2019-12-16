@@ -5,15 +5,19 @@ author:
 homepage:
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.6.0 <3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
+#  isolate: ^2.0.2
+#  isolate_service:
+#    path: ../isolate_service
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  coveralls: any
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
