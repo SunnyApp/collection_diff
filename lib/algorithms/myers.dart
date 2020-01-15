@@ -1,36 +1,42 @@
 import 'package:collection_diff/diff_algorithm.dart';
-import 'package:collection_diff/diff_model.dart';
+import 'package:collection_diff/diff_extensions.dart';
+import 'package:collection_diff/list_diff_model.dart';
 
-class MyersDiff implements DiffAlgorithm {
-  const MyersDiff();
+class MyersDiff implements ListDiffAlgorithm {
+  final bool identityOnly;
+  const MyersDiff([this.identityOnly = true]);
 
   @override
-  Diffs<E> execute<E>(DiffArguments<E> args) {
-    final List<E> oldList = args.oldList;
-    final List<E> newList = args.newList;
+  ListDiffs<E> execute<E>(ListDiffArguments<E> args) {
+    final List<E> oldList = args.original;
+    final List<E> newList = args.replacement;
 
-    if (identical(oldList, newList)) return Diffs.empty(args);
+    if (identical(oldList, newList)) return ListDiffs<E>.empty(args);
 
     final oldSize = oldList.length;
     final newSize = newList.length;
 
+    if (oldList.isEmpty && newList.isEmpty) return ListDiffs.empty(args);
+
     if (oldSize == 0) {
-      return args.result([InsertDiff(args, 0, newSize, newList)]);
+      return ListDiffs<E>.ofOperations(
+          [InsertDiff(args, 0, newSize, newList)], args);
     }
 
     if (newSize == 0) {
-      return Diffs.ofOperations([DeleteDiff(args, 0, oldSize)], args);
+      return ListDiffs<E>.ofOperations([DeleteDiff(args, 0, oldSize)], args);
     }
 
-    final path = _buildPath(args);
+    final path = _buildPath(args, identityOnly);
     final diffs = _buildPatch(path, args)..sort();
-    return args.result(diffs.reversed.toList(growable: false));
+    return ListDiffs<E>.ofOperations(
+        diffs.reversed.toList(growable: false), args);
   }
 }
 
-PathNode _buildPath<E>(DiffArguments<E> args) {
-  final oldList = args.oldList;
-  final newList = args.newList;
+PathNode _buildPath<E>(ListDiffArguments<E> args, bool identityOnly) {
+  final oldList = args.original;
+  final newList = args.replacement;
   final oldSize = oldList.length;
   final newSize = newList.length;
 
@@ -48,7 +54,9 @@ PathNode _buildPath<E>(DiffArguments<E> args) {
       PathNode prev;
 
       int i;
-      if ((k == -d) || (k != d && diagonal[kminus].originIndex < diagonal[kplus].originIndex)) {
+      if ((k == -d) ||
+          (k != d &&
+              diagonal[kminus].originIndex < diagonal[kplus].originIndex)) {
         i = diagonal[kplus].originIndex;
         prev = diagonal[kplus];
       } else {
@@ -62,7 +70,11 @@ PathNode _buildPath<E>(DiffArguments<E> args) {
 
       PathNode node = DiffNode(i, j, prev);
 
-      while (i < oldSize && j < newSize && args.areEqual(oldList[i], newList[j])) {
+      while (i < oldSize &&
+          j < newSize &&
+          (identityOnly
+              ? args.identical(oldList[i], newList[j])
+              : args.equal(oldList[i], newList[j]))) {
         i++;
         j++;
       }
@@ -82,16 +94,18 @@ PathNode _buildPath<E>(DiffArguments<E> args) {
   throw Exception();
 }
 
-List<ListDiff<E>> _buildPatch<E>(PathNode path, DiffArguments<E> args) {
-  final oldList = args.oldList;
-  final newList = args.newList;
+List<ListDiff<E>> _buildPatch<E>(PathNode path, ListDiffArguments<E> args) {
+  final oldList = args.original;
+  final newList = args.replacement;
   if (path == null) throw ArgumentError("path is null");
 
   final List<ListDiff<E>> diffs = [];
   if (path is Snake) {
     path = path.previousNode;
   }
-  while (path != null && path.previousNode != null && path.previousNode.revisedIndex >= 0) {
+  while (path != null &&
+      path.previousNode != null &&
+      path.previousNode.revisedIndex >= 0) {
     if (path is Snake) throw Exception();
     int i = path.originIndex;
     int j = path.revisedIndex;
@@ -124,13 +138,16 @@ abstract class PathNode {
 
   int get revisedIndex;
 
+  bool isReplace;
+
   PathNode get previousNode;
 
   bool get isBootStrap => originIndex < 0 || revisedIndex < 0;
 
   PathNode get previousSnake {
     if (isBootStrap) return null;
-    if (this is! Snake && previousNode != null) return previousNode.previousSnake;
+    if (this is! Snake && previousNode != null)
+      return previousNode.previousSnake;
     return this;
   }
 
@@ -165,5 +182,6 @@ class DiffNode extends PathNode {
   final int revisedIndex;
   final PathNode previousNode;
 
-  DiffNode(this.originIndex, this.revisedIndex, PathNode previousNode) : previousNode = previousNode?.previousSnake;
+  DiffNode(this.originIndex, this.revisedIndex, PathNode previousNode)
+      : previousNode = previousNode?.previousSnake;
 }
