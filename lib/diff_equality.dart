@@ -127,6 +127,32 @@ class DiffDelegateIdentity implements Equality<DiffDelegate> {
   bool isValidKey(Object o) => o is DiffDelegate;
 }
 
+class TypedDelegateEquality<T extends DiffDelegate> implements Equality<T> {
+  final bool identityOnly;
+  const TypedDelegateEquality.equals() : identityOnly = false;
+  const TypedDelegateEquality.identity() : identityOnly = true;
+
+  static DiffEquality<T> diffEquality<T extends DiffDelegate>() {
+    return const DiffEquality(areIdentical: TypedDelegateEquality.identity(), areEqual: TypedDelegateEquality.equals());
+  }
+
+  @override
+  bool equals(T first, T second) {
+    if (first == null || second == null) return false;
+    if (identityOnly) {
+      return first.diffKey == second.diffKey;
+    } else {
+      return first.diffSource == second.diffSource;
+    }
+  }
+
+  @override
+  int hash(final DiffDelegate e) => e.diffKey.hashCode;
+
+  @override
+  bool isValidKey(Object o) => o is DiffDelegate;
+}
+
 class DefaultDiffEquality<E> implements Equality<E> {
   static const delegate = DeepCollectionEquality.unordered();
 
@@ -144,8 +170,7 @@ class DefaultDiffEquality<E> implements Equality<E> {
   }
 
   @override
-  int hash(final dynamic e) =>
-      e is Diffable ? e.equalityHashCode : delegate.hash(e as Object);
+  int hash(final dynamic e) => e is Diffable ? e.equalityHashCode : delegate.hash(e as Object);
 
   @override
   bool isValidKey(Object o) => delegate.isValidKey(o);
