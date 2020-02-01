@@ -23,6 +23,19 @@ extension ListDiffExt<E> on ListDiff<E> {
   }
 }
 
+extension ListDiffsExt<E> on ListDiffs<E> {
+  String get summary {
+    final counts = <Type, int>{};
+    for (final diff in this) {
+      int count = counts.putIfAbsent(diff.runtimeType, () => 0);
+      counts[diff.runtimeType] = count + 1;
+    }
+    return counts.entries.map((entry) {
+      return "${entry.key}=${entry.value}";
+    }).join(", ");
+  }
+}
+
 extension SetDiffExt<E> on SetDiff<E> {
   E get item => items.firstWhere((_) => true, orElse: () => null);
 }
