@@ -133,9 +133,11 @@ class TypedDelegateEquality<T extends DiffDelegate> implements Equality<T> {
   const TypedDelegateEquality.identity() : identityOnly = true;
 
   static DiffEquality<T> diffEquality<T extends DiffDelegate>() {
-    return const DiffEquality(
-        areIdentical: TypedDelegateEquality.identity(),
-        areEqual: TypedDelegateEquality.equals());
+    return const DiffEquality(areIdentical: TypedDelegateEquality.identity(), areEqual: TypedDelegateEquality.equals());
+  }
+
+  static DiffEquality<T> diffIdentity<T extends DiffDelegate>() {
+    return const DiffEquality(areIdentical: TypedDelegateEquality.equals(), areEqual: TypedDelegateEquality.equals());
   }
 
   @override
@@ -172,8 +174,7 @@ class DefaultDiffEquality<E> implements Equality<E> {
   }
 
   @override
-  int hash(final dynamic e) =>
-      e is Diffable ? e.equalityHashCode : delegate.hash(e as Object);
+  int hash(final dynamic e) => e is Diffable ? e.equalityHashCode : delegate.hash(e as Object);
 
   @override
   bool isValidKey(Object o) => delegate.isValidKey(o);
