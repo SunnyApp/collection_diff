@@ -183,6 +183,30 @@ void main() {
       expect(diff, hasInsert((insert) => insert.index == 2));
     });
 
+    test("Downsizing diff", () async {
+      final list1 = generateFromNames(["Bob", "John"]);
+
+      final list2 = generateFromNames(["Eric"]);
+
+      final diff = list1.differences(list2);
+
+      expect(diff.length, equals(2));
+      expect(diff, hasDelete((delete) => delete.index == 1));
+      expect(diff, hasReplace((replace) => replace.index == 0));
+    });
+
+    test("Downsizing diff: 3 to 2", () async {
+      final list1 = generateFromNames(["Bob", "John", "Frank"]);
+
+      final list2 = generateFromNames(["Eric"]);
+
+      final diff = list1.differences(list2);
+
+      expect(diff.length, equals(2));
+      expect(diff, hasDelete((delete) => delete.index == 1));
+      expect(diff, hasReplace((replace) => replace.index == 0));
+    });
+
     test("List diff - longer list - move 2 elements up", () async {
       final list1 = generateFromNames([
         "Bob",

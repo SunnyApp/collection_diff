@@ -122,7 +122,12 @@ List<ListDiff<E>> _buildPatch<E>(PathNode path, ListDiffArguments<E> args) {
     } else if (original.isNotEmpty && revised.isEmpty) {
       diffs.add(DeleteDiff(args, iAnchor, original.length));
     } else {
-      diffs.add(ReplaceDiff(args, iAnchor, original.length, revised));
+      diffs.add(ReplaceDiff(args, iAnchor, revised.length, revised));
+      final extra = original.length - revised.length;
+      if (extra > 0) {
+        diffs.add(DeleteDiff(args, iAnchor + revised.length, extra));
+      }
+//      diffs.add(ReplaceDiff(args, iAnchor, original.length, revised));
     }
 
     if (path is Snake) {
