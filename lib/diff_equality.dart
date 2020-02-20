@@ -49,6 +49,7 @@ class _DiffDelegate with DiffDelegateMixin {
 abstract class DiffDelegate implements Diffable {
   const DiffDelegate();
 
+  factory DiffDelegate.of(dynamic diffKey, [dynamic diffSource]) => _DiffDelegate(diffKey, diffSource);
   dynamic get diffKey;
 
   dynamic get diffSource;
@@ -209,7 +210,29 @@ extension DiffableExtension on DiffDelegate {
   /// Produces a simple delegate - this is a better target for crossing isolate boundaries
   DiffDelegate get delegate {
     final self = this;
-    assert(self != null);
+    if (self == null) {
+      return nullDelegate;
+    }
     return _DiffDelegate(self.diffKey, self.diffSource);
+  }
+}
+
+final nullDelegate = DiffDelegate.of(NullKey());
+
+class NullKey {
+  static const __ = NullKey._();
+  const NullKey._();
+  factory NullKey() {
+    return __;
+  }
+
+  @override
+  int get hashCode {
+    return 0;
+  }
+
+  @override
+  bool operator ==(other) {
+    return other is NullKey;
   }
 }
