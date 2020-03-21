@@ -48,14 +48,12 @@ extension ListDiffItemExt<E> on InsertDiff<E> {
 
 extension ListDiffExtensions<E> on List<E> {
   ListDiffs<E> differences(List<E> other,
-      {bool identityOnly = true,
-      DiffEquality<E> equality,
-      ListDiffAlgorithm algorithm}) {
+      {bool identityOnly = true, DiffEquality equality, ListDiffAlgorithm algorithm}) {
     algorithm ??= MyersDiff(identityOnly);
     return algorithm.execute(ListDiffArguments(this, other, equality));
   }
 
-  ListDiffs<E> addAllDiff({DiffEquality<E> equals}) {
+  ListDiffs<E> addAllDiff({DiffEquality equals}) {
     if (this?.isNotEmpty != true) return ListDiffs.empty();
     final args = ListDiffArguments<E>([], this, equals);
     return ListDiffs.ofOperations(
@@ -68,36 +66,31 @@ extension ListDiffExtensions<E> on List<E> {
 
 extension StreamOfListDiffsExtensions<T> on Stream<ListDiffs<T>> {
   /// Returns a stream containing the state of the underlying list of [T]s for each change reported
-  Stream<List<T>> replacements() =>
-      this.map((ListDiffs<T> diffs) => diffs.args.replacement);
+  Stream<List<T>> replacements() => this.map((ListDiffs<T> diffs) => diffs.args.replacement);
 }
 
 extension MapDiffExtensions<K, V> on Map<K, V> {
   MapDiffs<K, V> differences(
     Map<K, V> other, {
     bool checkValues = true,
-    DiffEquality<K> keyEquality,
-    DiffEquality<V> valueEquality,
+    DiffEquality keyEquality,
+    DiffEquality valueEquality,
     MapDiffAlgorithm algorithm,
   }) {
     algorithm ??= const DefaultMapDiffAlgorithm();
     return algorithm.execute(MapDiffArguments(this, other,
-        checkValues: checkValues ?? true,
-        keyEquality: keyEquality,
-        valueEquality: valueEquality));
+        checkValues: checkValues ?? true, keyEquality: keyEquality, valueEquality: valueEquality));
   }
 }
 
 extension SetDiffExtensions<E> on Set<E> {
-  SetDiffs<E> differences(Set<E> other,
-      {bool checkEquality = true, DiffEquality<E> equality, String debugName}) {
+  SetDiffs<E> differences(Set<E> other, {bool checkEquality = true, DiffEquality equality, String debugName}) {
     const algorithm = DefaultSetDiffAlgorithm();
-    return algorithm
-        .execute(SetDiffArguments(this, other, checkEquality, equality));
+    return algorithm.execute(SetDiffArguments(this, other, checkEquality, equality));
   }
 }
 
-extension DiffEqualityExt<E> on DiffEquality<E> {
+extension DiffEqualityExt<E> on DiffEquality {
   bool identical(final E first, final E second) {
     return areIdentical.equals(first, second);
   }

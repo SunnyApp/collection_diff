@@ -22,22 +22,19 @@ class DefaultMapDiffAlgorithm implements MapDiffAlgorithm {
 
     if (oldIsEmpty) {
       return MapDiffs.ofOperations([
-        for (final entry in args.replacement.entries)
-          MapDiff.set(args, entry.key, entry.value),
+        for (final entry in args.replacement.entries) MapDiff.set(args, entry.key, entry.value),
       ], args);
     }
 
     if (newIsEmpty) {
       return MapDiffs.ofOperations([
-        for (final entry in args.original.entries)
-          MapDiff.unset(args, entry.key, entry.value),
+        for (final entry in args.original.entries) MapDiff.unset(args, entry.key, entry.value),
       ], args);
     }
 
     final checkValues = args.checkValues;
-    final currKeys =
-        EqualitySet<K>.from(args.keyEquality.areEqual, oldMap.keys);
-    final newKeys = EqualitySet<K>.from(args.keyEquality.areEqual, newMap.keys);
+    final currKeys = EqualitySet.from(args.keyEquality.areEqual, oldMap.keys);
+    final newKeys = EqualitySet.from(args.keyEquality.areEqual, newMap.keys);
 
     final addedKeys = newKeys.difference(currKeys);
     final removedKeys = currKeys.difference(newKeys);
@@ -46,11 +43,11 @@ class DefaultMapDiffAlgorithm implements MapDiffAlgorithm {
     final changes = MapDiffs<K, V>.args(args);
 
     for (final added in addedKeys) {
-      changes.add(MapDiff.set(args, added, newMap[added]));
+      changes.add(MapDiff.set(args, added as K, newMap[added]));
     }
 
     for (final removed in removedKeys) {
-      changes.add(MapDiff.unset(args, removed, oldMap[removed]));
+      changes.add(MapDiff.unset(args, removed as K, oldMap[removed]));
     }
 
     if (checkValues == true) {
@@ -58,7 +55,7 @@ class DefaultMapDiffAlgorithm implements MapDiffAlgorithm {
         final oldItem = oldMap[matchingKey];
         final newItem = newMap[matchingKey];
         if (!args.valueEquality.equal(oldItem, newItem)) {
-          changes.add(MapDiff.change(args, matchingKey, newItem, oldItem));
+          changes.add(MapDiff.change(args, matchingKey as K, newItem, oldItem));
         }
       }
     }

@@ -13,14 +13,11 @@ abstract class SetDiff<E> {
 
   SetDiff(this.args, this.type) : assert(type != null, args != null);
 
-  factory SetDiff.add(SetDiffArguments<E> args, Set<E> items) =>
-      _SetDiff(args, SetDiffType.add, items);
+  factory SetDiff.add(SetDiffArguments<E> args, Set<E> items) => _SetDiff(args, SetDiffType.add, items);
 
-  factory SetDiff.remove(SetDiffArguments<E> args, Set<E> items) =>
-      _SetDiff(args, SetDiffType.remove, items);
+  factory SetDiff.remove(SetDiffArguments<E> args, Set<E> items) => _SetDiff(args, SetDiffType.remove, items);
 
-  factory SetDiff.update(SetDiffArguments<E> args, E oldValue, E newValue) =>
-      UpdateDiff(args, oldValue, newValue);
+  factory SetDiff.update(SetDiffArguments<E> args, E oldValue, E newValue) => UpdateDiff(args, oldValue, newValue);
 
   @override
   String toString() {
@@ -31,10 +28,7 @@ abstract class SetDiff<E> {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is SetDiff &&
-          runtimeType == other.runtimeType &&
-          args == other.args;
+      identical(this, other) || other is SetDiff && runtimeType == other.runtimeType && args == other.args;
 
   @override
   int get hashCode => args.hashCode;
@@ -55,8 +49,7 @@ class UpdateDiff<E> extends SetDiff<E> {
   final E oldValue;
   final E newValue;
 
-  UpdateDiff(SetDiffArguments<E> args, this.oldValue, this.newValue)
-      : super(args, SetDiffType.update);
+  UpdateDiff(SetDiffArguments<E> args, this.oldValue, this.newValue) : super(args, SetDiffType.update);
 
   @override
   Set<E> get items => {newValue};
@@ -74,23 +67,18 @@ class SetDiffArguments<E> extends DiffArguments<E> {
   final String debugName;
   final String id;
 
-  SetDiffArguments(this.original, this.replacement, bool checkEquality,
-      DiffEquality<E> diffEquality,
+  SetDiffArguments(this.original, this.replacement, bool checkEquality, DiffEquality diffEquality,
       {String id, this.debugName})
       : id = id ?? Uuid().v4(),
         checkEquality = checkEquality ?? true,
         super(diffEquality: diffEquality ?? DiffEquality());
 
-  SetDiffArguments.copied(Iterable<E> original, Iterable<E> replacement,
-      bool checkEquality, DiffEquality<E> diffEquality)
+  SetDiffArguments.copied(Iterable<E> original, Iterable<E> replacement, bool checkEquality, DiffEquality diffEquality)
       : this([...?original], [...?replacement], checkEquality, diffEquality);
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is SetDiffArguments &&
-          runtimeType == other.runtimeType &&
-          id == other.id;
+      identical(this, other) || other is SetDiffArguments && runtimeType == other.runtimeType && id == other.id;
 
   @override
   int get hashCode => id.hashCode;
@@ -110,6 +98,5 @@ class SetDiffs<E> extends DelegatingList<SetDiff<E>> {
       : replacement = {...?replacement},
         super(operations);
 
-  SetDiffs.builder(SetDiffArguments<E> args)
-      : this.ofOperations(<SetDiff<E>>[], {}, args);
+  SetDiffs.builder(SetDiffArguments<E> args) : this.ofOperations(<SetDiff<E>>[], {}, args);
 }

@@ -7,19 +7,19 @@ import 'package:collection/collection.dart';
 /// [Diffable] can be used when the objects being diffed can be passed across isolate boundaries.
 /// [DiffDelegate] can be used when the objects cannot be passed across isolate boundaries.
 ///
-class DiffEquality<E> {
-  const DiffEquality({Equality<E> areIdentical, Equality<E> areEqual})
+class DiffEquality {
+  const DiffEquality({Equality areIdentical, Equality areEqual})
       : areIdentical = areIdentical ?? const DefaultDiffIdentical(),
         areEqual = areEqual ?? const DefaultDiffEquality();
 
-  static DiffEquality<DiffDelegate> ofDiffDelegate() => const DiffEquality(
+  static DiffEquality ofDiffDelegate() => const DiffEquality(
         areIdentical: DiffDelegateIdentity(),
         areEqual: DiffDelegateEquality(),
       );
 
   /// The fallback equality
-  final Equality<E> areIdentical;
-  final Equality<E> areEqual;
+  final Equality areIdentical;
+  final Equality areEqual;
 }
 
 /// Used when the objects being compared can pass safely across isolate boundaries.  If the object being
@@ -128,37 +128,7 @@ class DiffDelegateIdentity implements Equality<DiffDelegate> {
   bool isValidKey(Object o) => o is DiffDelegate;
 }
 
-class TypedDelegateEquality<T extends DiffDelegate> implements Equality<T> {
-  final bool identityOnly;
-  const TypedDelegateEquality.equals() : identityOnly = false;
-  const TypedDelegateEquality.identity() : identityOnly = true;
-
-  static DiffEquality<T> diffEquality<T extends DiffDelegate>() {
-    return const DiffEquality(areIdentical: TypedDelegateEquality.identity(), areEqual: TypedDelegateEquality.equals());
-  }
-
-  static DiffEquality<T> diffIdentity<T extends DiffDelegate>() {
-    return const DiffEquality(areIdentical: TypedDelegateEquality.equals(), areEqual: TypedDelegateEquality.equals());
-  }
-
-  @override
-  bool equals(T first, T second) {
-    if (first == null || second == null) return false;
-    if (identityOnly) {
-      return first.diffKey == second.diffKey;
-    } else {
-      return first.diffSource == second.diffSource;
-    }
-  }
-
-  @override
-  int hash(final DiffDelegate e) => e.diffKey.hashCode;
-
-  @override
-  bool isValidKey(Object o) => o is DiffDelegate;
-}
-
-class DefaultDiffEquality<E> implements Equality<E> {
+class DefaultDiffEquality implements Equality {
   static const delegate = DeepCollectionEquality.unordered();
 
   const DefaultDiffEquality();
@@ -181,7 +151,7 @@ class DefaultDiffEquality<E> implements Equality<E> {
   bool isValidKey(Object o) => delegate.isValidKey(o);
 }
 
-class DefaultDiffIdentical<E> implements Equality<E> {
+class DefaultDiffIdentical implements Equality {
   static const delegate = DeepCollectionEquality.unordered();
 
   const DefaultDiffIdentical();

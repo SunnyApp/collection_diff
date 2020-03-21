@@ -12,9 +12,9 @@ abstract class DiffArguments<E> {
 
   Iterable<E> get replacement;
 
-  final DiffEquality<E> diffEquality;
+  final DiffEquality diffEquality;
 
-  DiffArguments({DiffEquality<E> diffEquality})
-      : diffEquality = diffEquality ?? DiffEquality<E>();
+  DiffArguments({DiffEquality diffEquality})
+      : diffEquality = diffEquality ?? DiffEquality();
   const DiffArguments.constant(this.diffEquality);
 }

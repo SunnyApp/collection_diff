@@ -46,18 +46,14 @@ class MapDiff<K, V> {
 class MapDiffArguments<K, V> {
   final Map<K, V> original;
   final Map<K, V> replacement;
-  final DiffEquality<K> keyEquality;
-  final DiffEquality<V> valueEquality;
+  final DiffEquality keyEquality;
+  final DiffEquality valueEquality;
   final bool checkValues;
   final String debugName;
   final String id;
 
   MapDiffArguments(this.original, this.replacement,
-      {bool checkValues,
-      DiffEquality<K> keyEquality,
-      DiffEquality<V> valueEquality,
-      this.debugName,
-      String id})
+      {bool checkValues, DiffEquality keyEquality, DiffEquality valueEquality, this.debugName, String id})
       : id = id ?? Uuid().v4(),
         assert(original != null),
         assert(replacement != null),
@@ -67,11 +63,7 @@ class MapDiffArguments<K, V> {
 
   /// Performs a defensive copy of the input maps in case they are not safe for crossing isolate boundaries
   MapDiffArguments.copied(Map<K, V> original, Map<K, V> replacement,
-      {String debugName,
-      String id,
-      bool checkValues = true,
-      DiffEquality<K> keyEquality,
-      DiffEquality<V> valueEquality})
+      {String debugName, String id, bool checkValues = true, DiffEquality keyEquality, DiffEquality valueEquality})
       : this({...?original}, {...?replacement},
             checkValues: checkValues,
             keyEquality: keyEquality,
@@ -81,10 +73,7 @@ class MapDiffArguments<K, V> {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is MapDiffArguments &&
-          runtimeType == other.runtimeType &&
-          id == other.id;
+      identical(this, other) || other is MapDiffArguments && runtimeType == other.runtimeType && id == other.id;
 
   @override
   int get hashCode => id.hashCode;
@@ -101,20 +90,14 @@ class MapDiffs<K, V> extends DelegatingList<MapDiff<K, V>> {
   MapDiffs.ofOperations(this.operations, this.args) : super(operations);
 
   MapDiffs.builder(Map<K, V> source,
-      {Map<K, V> replacement,
-      bool checkValues,
-      DiffEquality<K> keyEquality,
-      DiffEquality<V> valueEquality})
+      {Map<K, V> replacement, bool checkValues, DiffEquality keyEquality, DiffEquality valueEquality})
       : this.ofOperations(
           <MapDiff<K, V>>[],
           MapDiffArguments(source, replacement ?? source,
-              checkValues: checkValues,
-              keyEquality: keyEquality,
-              valueEquality: valueEquality),
+              checkValues: checkValues, keyEquality: keyEquality, valueEquality: valueEquality),
         );
 
-  MapDiffs.args(MapDiffArguments<K, V> args)
-      : this.ofOperations(<MapDiff<K, V>>[], args);
+  MapDiffs.args(MapDiffArguments<K, V> args) : this.ofOperations(<MapDiff<K, V>>[], args);
 
   Map<K, V> get original => args.original;
 
@@ -122,10 +105,7 @@ class MapDiffs<K, V> extends DelegatingList<MapDiff<K, V>> {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is MapDiffs &&
-          runtimeType == other.runtimeType &&
-          args == other.args;
+      identical(this, other) || other is MapDiffs && runtimeType == other.runtimeType && args == other.args;
 
   @override
   int get hashCode => args.hashCode;
