@@ -6,7 +6,8 @@ import 'package:collection_diff/diff_algorithm.dart';
 import 'package:collection_diff/list_diff_model.dart';
 
 class WagnerFischerDiff implements ListDiffAlgorithm {
-  const WagnerFischerDiff();
+  final bool isIdentityOnly;
+  const WagnerFischerDiff({this.isIdentityOnly = true});
 
   @override
   ListDiffs<E> execute<E extends Object>(final ListDiffArguments<E> args) {
@@ -33,7 +34,7 @@ class WagnerFischerDiff implements ListDiffAlgorithm {
       // column in matrix
       var indexInNew = 0;
       replacement.forEach((newItem) {
-        if (args.equal(oldItem, newItem)) {
+        if (args.compare(isIdentityOnly, oldItem, newItem)) {
           currentRow.update(indexInNew: indexInNew, previousRow: previousRow);
         } else {
           currentRow.updateWithMin(
@@ -54,6 +55,11 @@ class WagnerFischerDiff implements ListDiffAlgorithm {
     final changes = currentRow.lastSlot();
     return changes;
   }
+
+  @override
+  ListDiffAlgorithm withIdentityOnly(bool isIdentityOnly) {
+    return WagnerFischerDiff(isIdentityOnly: isIdentityOnly ?? true);
+  }
 }
 
 // We can adapt the algorithm to use less space, O(m) instead of O(mn),
@@ -70,8 +76,7 @@ class Row<E extends Object> {
 
   /// Seed with .insert from new
   seed(List<E> seedArray) {
-    slots = List<ListDiffs<E>>.generate(
-        seedArray.length + 1, (_) => ListDiffs.builder(args));
+    slots = List<ListDiffs<E>>.generate(seedArray.length + 1, (_) => ListDiffs.builder(args));
     // Each slot increases in the number of changes
     var index = 0;
     seedArray.forEach((item) {
@@ -108,26 +113,20 @@ class Row<E extends Object> {
   }
 
   /// Choose the min
-  updateWithMin(
-      {Row<E> previousRow,
-      int indexInNew,
-      E newItem,
-      int indexInOld,
-      E oldItem}) {
+  updateWithMin({Row<E> previousRow, int indexInNew, E newItem, int indexInOld, E oldItem}) {
     final slotIndex = indexInNew + 1;
     final topSlot = previousRow.slots[slotIndex];
     final leftSlot = slots[slotIndex - 1];
     final topLeftSlot = previousRow.slots[slotIndex - 1];
 
-    final minCount =
-        min(min(topSlot.length, leftSlot.length), topLeftSlot.length);
+    final minCount = min(min(topSlot.length, leftSlot.length), topLeftSlot.length);
 
     // Order of cases does not matter
 
     if (minCount == topSlot.length) {
       slots[slotIndex] = combine(
         slot: topSlot,
-        change: DeleteDiff<E>(args, indexInNew, 1),
+        change: DeleteDiff<E>(args, indexInOld, 1),
       );
     } else if (minCount == leftSlot.length) {
       slots[slotIndex] = combine(
@@ -146,8 +145,7 @@ class Row<E extends Object> {
 
   /// Add one more change
   ListDiffs<E> combine({ListDiffs<E> slot, ListDiff<E> change}) {
-    return ListDiffs<E>.ofOperations(
-        [...slot, change].toList(growable: false), args);
+    return ListDiffs<E>.ofOperations([...slot, change].toList(growable: false), args);
   }
 
   //// Last slot

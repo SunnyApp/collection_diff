@@ -19,8 +19,7 @@ class MyersDiff implements ListDiffAlgorithm {
     if (oldList.isEmpty && newList.isEmpty) return ListDiffs.empty(args);
 
     if (oldSize == 0) {
-      return ListDiffs<E>.ofOperations(
-          [InsertDiff(args, 0, newSize, newList)], args);
+      return ListDiffs<E>.ofOperations([InsertDiff(args, 0, newSize, newList)], args);
     }
 
     if (newSize == 0) {
@@ -29,8 +28,12 @@ class MyersDiff implements ListDiffAlgorithm {
 
     final path = _buildPath(args, identityOnly);
     final diffs = _buildPatch(path, args)..sort();
-    return ListDiffs<E>.ofOperations(
-        diffs.reversed.toList(growable: false), args);
+    return ListDiffs<E>.ofOperations(diffs.reversed.toList(growable: false), args);
+  }
+
+  @override
+  ListDiffAlgorithm withIdentityOnly(bool isIdentityOnly) {
+    return MyersDiff(isIdentityOnly ?? true);
   }
 }
 
@@ -54,9 +57,7 @@ PathNode _buildPath<E>(ListDiffArguments<E> args, bool identityOnly) {
       PathNode prev;
 
       int i;
-      if ((k == -d) ||
-          (k != d &&
-              diagonal[kminus].originIndex < diagonal[kplus].originIndex)) {
+      if ((k == -d) || (k != d && diagonal[kminus].originIndex < diagonal[kplus].originIndex)) {
         i = diagonal[kplus].originIndex;
         prev = diagonal[kplus];
       } else {
@@ -72,9 +73,7 @@ PathNode _buildPath<E>(ListDiffArguments<E> args, bool identityOnly) {
 
       while (i < oldSize &&
           j < newSize &&
-          (identityOnly
-              ? args.identical(oldList[i], newList[j])
-              : args.equal(oldList[i], newList[j]))) {
+          (identityOnly ? args.identical(oldList[i], newList[j]) : args.equal(oldList[i], newList[j]))) {
         i++;
         j++;
       }
@@ -103,9 +102,7 @@ List<ListDiff<E>> _buildPatch<E>(PathNode path, ListDiffArguments<E> args) {
   if (path is Snake) {
     path = path.previousNode;
   }
-  while (path != null &&
-      path.previousNode != null &&
-      path.previousNode.revisedIndex >= 0) {
+  while (path != null && path.previousNode != null && path.previousNode.revisedIndex >= 0) {
     if (path is Snake) throw Exception();
     int i = path.originIndex;
     int j = path.revisedIndex;
@@ -188,6 +185,5 @@ class DiffNode extends PathNode {
   final int revisedIndex;
   final PathNode previousNode;
 
-  DiffNode(this.originIndex, this.revisedIndex, PathNode previousNode)
-      : previousNode = previousNode?.previousSnake;
+  DiffNode(this.originIndex, this.revisedIndex, PathNode previousNode) : previousNode = previousNode?.previousSnake;
 }

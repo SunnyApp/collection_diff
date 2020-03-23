@@ -12,6 +12,8 @@ abstract class ListDiffAlgorithm {
 
   static const myers = MyersDiff();
   static const wagnerFischer = WagnerFischerDiff();
+
+  ListDiffAlgorithm withIdentityOnly(bool isIdentityOnly);
 }
 
 abstract class SetDiffAlgorithm {

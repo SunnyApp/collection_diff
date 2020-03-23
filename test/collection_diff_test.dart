@@ -6,7 +6,8 @@ import 'set_diff_test.dart';
 
 void main() {
   group("All Tests", () {
-    listDiffTests();
+    myersDiffTests();
+    wfgerDiffTests();
     mapDiffTests();
     setDiffTests();
   });
