@@ -14,7 +14,8 @@ void main() {
 void myersDiffTests() {
   _listDiffTests("myers", MyersDiff(), () {
     test("List diff - insert middle big list", () async {
-      final list1 = generateFromNames([...Iterable.generate(5000, (i) => "Guy$i")]);
+      final list1 =
+          generateFromNames([...Iterable.generate(5000, (i) => "Guy$i")]);
 
       final list2 = [...list1]..insert(100, Renamable("Kevin"));
 
@@ -33,7 +34,8 @@ void wfgerDiffTests() {
   _listDiffTests("wagnerFischer", WagnerFischerDiff());
 }
 
-void _listDiffTests(String algorithmName, ListDiffAlgorithm algorithm, [void moreTests()]) {
+void _listDiffTests(String algorithmName, ListDiffAlgorithm algorithm,
+    [void moreTests()]) {
   group("listDiff - $algorithmName", () {
     setUp(() {
       increment = 1;
@@ -68,7 +70,8 @@ void _listDiffTests(String algorithmName, ListDiffAlgorithm algorithm, [void mor
       final diff = list1.differences(list2, algorithm: algorithm);
       expect(diff.length, equals(2));
       expect(diff, hasDelete((delete) => delete.index == 5));
-      expect(diff, hasInsert((insert) => insert.item == 5 && insert.index == 4));
+      expect(
+          diff, hasInsert((insert) => insert.item == 5 && insert.index == 4));
     });
 
     test("List diff - swap - $algorithmName", () async {
@@ -79,12 +82,14 @@ void _listDiffTests(String algorithmName, ListDiffAlgorithm algorithm, [void mor
       if (diff[0] is InsertDiff) {
         expect(diff[0], isA<InsertDiff>());
         expect(diff[1], isA<DeleteDiff>());
-        expect(diff, hasInsert<int>((insert) => insert.index == 6 && insert.item == 7));
+        expect(diff,
+            hasInsert<int>((insert) => insert.index == 6 && insert.item == 7));
         expect(diff, hasDelete<int>((delete) => delete.index == 4));
       } else {
         expect(diff[0], isA<DeleteDiff>());
         expect(diff[1], isA<InsertDiff>());
-        expect(diff, hasInsert<int>((insert) => insert.index == 5 && insert.item == 7));
+        expect(diff,
+            hasInsert<int>((insert) => insert.index == 5 && insert.item == 7));
         expect(diff, hasDelete<int>((delete) => delete.index == 4));
       }
     });
@@ -109,11 +114,14 @@ void _listDiffTests(String algorithmName, ListDiffAlgorithm algorithm, [void mor
       ]);
 
       final list2 = [list1[0], list1[1].rename("The Binary"), list1[2]];
-      final diff = list1.differences(list2, identityOnly: false, algorithm: algorithm.withIdentityOnly(false));
+      final diff = list1.differences(list2,
+          identityOnly: false, algorithm: algorithm.withIdentityOnly(false));
       expect(diff.length, equals(1));
     });
 
-    test("List diff - Rename an item - Using toString as keyGenerator - $algorithmName", () async {
+    test(
+        "List diff - Rename an item - Using toString as keyGenerator - $algorithmName",
+        () async {
       final list1 = generateFromNames([
         "Bob",
         "John",
@@ -127,7 +135,9 @@ void _listDiffTests(String algorithmName, ListDiffAlgorithm algorithm, [void mor
       expect(diff.length, equals(0));
     });
 
-    test("List diff - Rename an item - Using toString as keyGenerator (equality) - $algorithmName", () async {
+    test(
+        "List diff - Rename an item - Using toString as keyGenerator (equality) - $algorithmName",
+        () async {
       final list1 = generateFromNames([
         "Bob",
         "John",
@@ -137,12 +147,14 @@ void _listDiffTests(String algorithmName, ListDiffAlgorithm algorithm, [void mor
 
       final list2 = [...list1]..[2] = list1[2].rename("Dick");
 
-      final diff = list1.differences(list2, identityOnly: false, algorithm: algorithm.withIdentityOnly(false));
+      final diff = list1.differences(list2,
+          identityOnly: false, algorithm: algorithm.withIdentityOnly(false));
       expect(diff.length, equals(1));
       expect(diff, hasReplace((replace) => replace.index == 2));
     });
 
-    test("List diff - nokeys - rename the first (identity) - $algorithmName", () async {
+    test("List diff - nokeys - rename the first (identity) - $algorithmName",
+        () async {
       final list1 = generateFromNames([
         "Bob",
         "John",
@@ -156,7 +168,8 @@ void _listDiffTests(String algorithmName, ListDiffAlgorithm algorithm, [void mor
       expect(diff.length, equals(0));
     });
 
-    test("List diff - nokeys - rename the first (equals) - $algorithmName", () async {
+    test("List diff - nokeys - rename the first (equals) - $algorithmName",
+        () async {
       final list1 = generateFromNames([
         "Bob",
         "John",
@@ -166,13 +179,24 @@ void _listDiffTests(String algorithmName, ListDiffAlgorithm algorithm, [void mor
 
       final list2 = [list1[0].rename("Robert"), list1[1], list1[2], list1[3]];
 
-      final diff = list1.differences(list2, identityOnly: false, algorithm: algorithm.withIdentityOnly(false));
+      final diff = list1.differences(list2,
+          identityOnly: false, algorithm: algorithm.withIdentityOnly(false));
       expect(diff.length, equals(1));
       expect(diff, hasReplace((replace) => replace.index == 0));
     });
 //
     test("List diff - longer list - move backwards - $algorithmName", () async {
-      final list1 = generateFromNames(["Bob", "John", "Eric", "Richard", "James", "Lady", "Tramp", "Randy", "Donald"]);
+      final list1 = generateFromNames([
+        "Bob",
+        "John",
+        "Eric",
+        "Richard",
+        "James",
+        "Lady",
+        "Tramp",
+        "Randy",
+        "Donald"
+      ]);
 
       final list2 = [...list1]
         ..insert(8, list1[2])
@@ -189,8 +213,19 @@ void _listDiffTests(String algorithmName, ListDiffAlgorithm algorithm, [void mor
       }
     });
 
-    test("List diff - longer list - move element up - $algorithmName", () async {
-      final list1 = generateFromNames(["Bob", "John", "Eric", "Richard", "James", "Lady", "Tramp", "Randy", "Donald"]);
+    test("List diff - longer list - move element up - $algorithmName",
+        () async {
+      final list1 = generateFromNames([
+        "Bob",
+        "John",
+        "Eric",
+        "Richard",
+        "James",
+        "Lady",
+        "Tramp",
+        "Randy",
+        "Donald"
+      ]);
 
       final list2 = [...list1]..move(7, 2);
 
@@ -231,15 +266,27 @@ void _listDiffTests(String algorithmName, ListDiffAlgorithm algorithm, [void mor
       }
     });
 
-    test("List diff - longer list - move 2 elements up - $algorithmName", () async {
-      final list1 = generateFromNames(["Bob", "John", "Eric", "Richard", "James", "Lady", "Tramp", "Randy", "Donald"]);
+    test("List diff - longer list - move 2 elements up - $algorithmName",
+        () async {
+      final list1 = generateFromNames([
+        "Bob",
+        "John",
+        "Eric",
+        "Richard",
+        "James",
+        "Lady",
+        "Tramp",
+        "Randy",
+        "Donald"
+      ]);
 
       final list2 = [...list1]..move(7, 3)..move(8, 2);
       final diff = list1.differences(list2, algorithm: algorithm);
 
       if (diff.length == 3) {
         expect(diff.length, equals(3));
-        expect(diff, hasDelete((delete) => delete.size == 2 && delete.index == 7));
+        expect(
+            diff, hasDelete((delete) => delete.size == 2 && delete.index == 7));
         expect(diff, hasInsert((insert) => insert.index == 3));
         expect(diff, hasInsert((insert) => insert.index == 2));
       } else {
@@ -254,7 +301,17 @@ void _listDiffTests(String algorithmName, ListDiffAlgorithm algorithm, [void mor
     });
 
     test("List diff - insert beginning - $algorithmName", () async {
-      final list1 = generateFromNames(["Bob", "John", "Eric", "Richard", "James", "Lady", "Tramp", "Randy", "Donald"]);
+      final list1 = generateFromNames([
+        "Bob",
+        "John",
+        "Eric",
+        "Richard",
+        "James",
+        "Lady",
+        "Tramp",
+        "Randy",
+        "Donald"
+      ]);
       final list2 = [...list1]..insert(0, Renamable("Kevin"));
       final diff = list1.differences(list2, algorithm: algorithm);
       expect(diff.length, equals(1));
@@ -262,7 +319,17 @@ void _listDiffTests(String algorithmName, ListDiffAlgorithm algorithm, [void mor
     });
 
     test("List diff - insert middle - $algorithmName", () async {
-      final list1 = generateFromNames(["Bob", "John", "Eric", "Richard", "James", "Lady", "Tramp", "Randy", "Donald"]);
+      final list1 = generateFromNames([
+        "Bob",
+        "John",
+        "Eric",
+        "Richard",
+        "James",
+        "Lady",
+        "Tramp",
+        "Randy",
+        "Donald"
+      ]);
 
       final list2 = [...list1]..insert(4, Renamable("Kevin"));
 
@@ -273,7 +340,17 @@ void _listDiffTests(String algorithmName, ListDiffAlgorithm algorithm, [void mor
     });
 //
     test("List diff - remove beginning - $algorithmName", () async {
-      final list1 = generateFromNames(["Bob", "John", "Eric", "Richard", "James", "Lady", "Tramp", "Randy", "Donald"]);
+      final list1 = generateFromNames([
+        "Bob",
+        "John",
+        "Eric",
+        "Richard",
+        "James",
+        "Lady",
+        "Tramp",
+        "Randy",
+        "Donald"
+      ]);
 
       final list2 = [...list1];
       list2.removeAt(0);
@@ -285,7 +362,17 @@ void _listDiffTests(String algorithmName, ListDiffAlgorithm algorithm, [void mor
     });
 
     test("List diff - remove middle - $algorithmName", () async {
-      final list1 = generateFromNames(["Bob", "John", "Eric", "Richard", "James", "Lady", "Tramp", "Randy", "Donald"]);
+      final list1 = generateFromNames([
+        "Bob",
+        "John",
+        "Eric",
+        "Richard",
+        "James",
+        "Lady",
+        "Tramp",
+        "Randy",
+        "Donald"
+      ]);
 
       final list2 = [...list1];
       list2.removeAt(4);
@@ -296,7 +383,8 @@ void _listDiffTests(String algorithmName, ListDiffAlgorithm algorithm, [void mor
     });
 
     test("List diff - using delegate identity - $algorithmName", () async {
-      final list1 = generateFromNames(["Captain America", "Captain Marvel", "Thor"]);
+      final list1 =
+          generateFromNames(["Captain America", "Captain Marvel", "Thor"]);
       final list2 = [...list1]..[1] = list1[1].rename("The Binary");
 
       final diff = list1.differences(list2, algorithm: algorithm);
@@ -304,10 +392,12 @@ void _listDiffTests(String algorithmName, ListDiffAlgorithm algorithm, [void mor
     });
 
     test("List diff - using delegate equals - $algorithmName", () async {
-      final list1 = generateFromNames(["Captain America", "Captain Marvel", "Thor"]);
+      final list1 =
+          generateFromNames(["Captain America", "Captain Marvel", "Thor"]);
       final list2 = [...list1]..[1] = list1[1].rename("The Binary");
 
-      final diff = list1.differences(list2, identityOnly: false, algorithm: algorithm.withIdentityOnly(false));
+      final diff = list1.differences(list2,
+          identityOnly: false, algorithm: algorithm.withIdentityOnly(false));
       expect(diff.length, equals(1));
       expect(diff, hasReplace((replace) => replace.index == 1));
     });

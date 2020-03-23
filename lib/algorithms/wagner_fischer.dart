@@ -76,7 +76,8 @@ class Row<E extends Object> {
 
   /// Seed with .insert from new
   seed(List<E> seedArray) {
-    slots = List<ListDiffs<E>>.generate(seedArray.length + 1, (_) => ListDiffs.builder(args));
+    slots = List<ListDiffs<E>>.generate(
+        seedArray.length + 1, (_) => ListDiffs.builder(args));
     // Each slot increases in the number of changes
     var index = 0;
     seedArray.forEach((item) {
@@ -113,13 +114,19 @@ class Row<E extends Object> {
   }
 
   /// Choose the min
-  updateWithMin({Row<E> previousRow, int indexInNew, E newItem, int indexInOld, E oldItem}) {
+  updateWithMin(
+      {Row<E> previousRow,
+      int indexInNew,
+      E newItem,
+      int indexInOld,
+      E oldItem}) {
     final slotIndex = indexInNew + 1;
     final topSlot = previousRow.slots[slotIndex];
     final leftSlot = slots[slotIndex - 1];
     final topLeftSlot = previousRow.slots[slotIndex - 1];
 
-    final minCount = min(min(topSlot.length, leftSlot.length), topLeftSlot.length);
+    final minCount =
+        min(min(topSlot.length, leftSlot.length), topLeftSlot.length);
 
     // Order of cases does not matter
 
@@ -145,7 +152,8 @@ class Row<E extends Object> {
 
   /// Add one more change
   ListDiffs<E> combine({ListDiffs<E> slot, ListDiff<E> change}) {
-    return ListDiffs<E>.ofOperations([...slot, change].toList(growable: false), args);
+    return ListDiffs<E>.ofOperations(
+        [...slot, change].toList(growable: false), args);
   }
 
   //// Last slot
