@@ -2,7 +2,7 @@
 
 
 [![pub package](https://img.shields.io/pub/v/collection_diff.svg)](https://pub.dartlang.org/packages/collection_diff)
-[![Coverage Status](https://coveralls.io/repos/pgithub/SunnyApp/collection_diff/badge.svg?branch=master)](https://coveralls.io/github/SunnyApp/collection_diff?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/SunnyApp/collection_diff/badge.svg?branch=master)](https://coveralls.io/github/SunnyApp/collection_diff?branch=master)
 
 
 A flutter project that compares two collections and produces a list of deltas between then.  This
