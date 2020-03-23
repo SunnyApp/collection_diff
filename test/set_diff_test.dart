@@ -4,14 +4,25 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'test_mocks.dart';
 
-void main() {
-  group("all", () {
+void main() => setDiffTests();
+void setDiffTests() {
+  group("setDiff", () {
     setUp(() {
       increment = 1;
     });
 
     test("Set diff - remove beginning", () async {
-      final set1 = testSet(["Bob", "John", "Eric", "Richard", "James", "Lady", "Tramp", "Randy", "Donald"]);
+      final set1 = testSet([
+        "Bob",
+        "John",
+        "Eric",
+        "Richard",
+        "James",
+        "Lady",
+        "Tramp",
+        "Randy",
+        "Donald"
+      ]);
       final set2 = {...set1}..removeWhere((r) => r.id == "1");
 
       final diff = set1.differences(set2);
@@ -21,7 +32,17 @@ void main() {
     });
 
     test("Set diff - remove all", () async {
-      final set1 = testSet(["Bob", "John", "Eric", "Richard", "James", "Lady", "Tramp", "Randy", "Donald"]);
+      final set1 = testSet([
+        "Bob",
+        "John",
+        "Eric",
+        "Richard",
+        "James",
+        "Lady",
+        "Tramp",
+        "Randy",
+        "Donald"
+      ]);
       final set2 = <Renamable>{};
 
       final diff = set1.differences(set2);
@@ -32,7 +53,17 @@ void main() {
 
     test("Set diff - add all", () async {
       final set1 = <Renamable>{};
-      final set2 = testSet(["Bob", "John", "Eric", "Richard", "James", "Lady", "Tramp", "Randy", "Donald"]);
+      final set2 = testSet([
+        "Bob",
+        "John",
+        "Eric",
+        "Richard",
+        "James",
+        "Lady",
+        "Tramp",
+        "Randy",
+        "Donald"
+      ]);
 
       final diff = set1.differences(set2);
 
@@ -41,7 +72,17 @@ void main() {
     });
 
     test("Set diff - add element", () async {
-      final set1 = testSet(["Bob", "John", "Eric", "Richard", "James", "Lady", "Tramp", "Randy", "Donald"]);
+      final set1 = testSet([
+        "Bob",
+        "John",
+        "Eric",
+        "Richard",
+        "James",
+        "Lady",
+        "Tramp",
+        "Randy",
+        "Donald"
+      ]);
       final set2 = {...set1}..add(Renamable("Kevin"));
       final diff = set1.differences(set2);
 
@@ -52,7 +93,17 @@ void main() {
     });
 
     test("Set diff - update pointer doesn't produce diff", () async {
-      final set1 = testSet(["Bob", "John", "Eric", "Richard", "James", "Lady", "Tramp", "Randy", "Donald"]);
+      final set1 = testSet([
+        "Bob",
+        "John",
+        "Eric",
+        "Richard",
+        "James",
+        "Lady",
+        "Tramp",
+        "Randy",
+        "Donald"
+      ]);
       final set2 = {...set1};
       set2.where((i) => i.id == "1").forEach((i) => i.name = "Robert");
 
@@ -61,7 +112,17 @@ void main() {
     });
 
     test("Set diff - identical (pointer) lists", () async {
-      final set1 = testSet(["Bob", "John", "Eric", "Richard", "James", "Lady", "Tramp", "Randy", "Donald"]);
+      final set1 = testSet([
+        "Bob",
+        "John",
+        "Eric",
+        "Richard",
+        "James",
+        "Lady",
+        "Tramp",
+        "Randy",
+        "Donald"
+      ]);
       final set2 = set1;
       set1.remove(set1.first);
 
@@ -70,9 +131,19 @@ void main() {
     });
 
     test("Set diff - remove and add same", () async {
-      final set1 = testSet(["Bob", "John", "Eric", "Richard", "James", "Lady", "Tramp", "Randy", "Donald"]);
+      final set1 = testSet([
+        "Bob",
+        "John",
+        "Eric",
+        "Richard",
+        "James",
+        "Lady",
+        "Tramp",
+        "Randy",
+        "Donald"
+      ]);
 
-      // Because we're adding a new instance altogether, it should work
+      // Because we're adding a new instance altogether, we won't get false positive on identical(...)
       final set2 = {...set1}
         ..removeWhere((n) => n.id == "1")
         ..add(Renamable.ofId("1", "Robert"));
@@ -88,7 +159,17 @@ void main() {
     });
 
     test("Set diff - add item with matching identity", () async {
-      final set1 = testSet(["Bob", "John", "Eric", "Richard", "James", "Lady", "Tramp", "Randy", "Donald"]);
+      final set1 = testSet([
+        "Bob",
+        "John",
+        "Eric",
+        "Richard",
+        "James",
+        "Lady",
+        "Tramp",
+        "Randy",
+        "Donald"
+      ]);
 
       // An odd case - we're using a different equals implementation for the diff than the default set (hashCode and ==)
       // so the target set will have an extra item, even though the diff reports them as being the same...
@@ -104,21 +185,21 @@ void main() {
     test("Model identity sanity checks", () async {
       final defaultEq = DiffEquality();
       expect(
-          defaultEq.identical(
+          defaultEq.areIdentical(
             Renamable.ofId("1", "Richard"),
             Renamable.ofId("1", "Dick"),
           ),
           equals(true),
           reason: "ids match");
       expect(
-          defaultEq.identical(
+          defaultEq.areIdentical(
             Renamable.ofId("1", "Richard"),
             Renamable.ofId("2", "Richard"),
           ),
           equals(false),
           reason: "names matching doesn't constitute identity");
       expect(
-          defaultEq.identical(
+          defaultEq.areIdentical(
             Renamable.ofId("1", "Richard"),
             Renamable.ofId("1", "Richard"),
           ),
@@ -126,36 +207,43 @@ void main() {
           reason: "full match");
 
       final rich = Renamable.ofId("1", "Richard");
-      expect(defaultEq.identical(rich, rich), equals(true), reason: "same identity");
+      expect(defaultEq.areIdentical(rich, rich), equals(true),
+          reason: "same identity");
 
-      final set = EqualitySet(defaultEq.areIdentical);
+      final set = EqualitySet(defaultEq.asIdentityEquality());
       set.add(Renamable.ofId("1", "Richard"));
 
-      expect(defaultEq.areIdentical.isValidKey(Renamable.ofId("1", "Richard")), equals(true),
+      expect(
+          defaultEq
+              .asIdentityEquality()
+              .isValidKey(Renamable.ofId("1", "Richard")),
+          equals(true),
           reason: "Diffable is a valid key");
 
-      expect(set.contains(Renamable.ofId("1", "Richard")), equals(true), reason: "Should contain equal item");
-      expect(set.contains(Renamable.ofId("1", "Dick")), equals(true), reason: "Should contain identical item");
+      expect(set.contains(Renamable.ofId("1", "Richard")), equals(true),
+          reason: "Should contain equal item");
+      expect(set.contains(Renamable.ofId("1", "Dick")), equals(true),
+          reason: "Should contain identical item");
     });
 
     test("Model equality sanity checks", () async {
       final defaultEq = DiffEquality();
       expect(
-          defaultEq.equal(
+          defaultEq.areEqual(
             Renamable.ofId("1", "Richard"),
             Renamable.ofId("1", "Dick"),
           ),
           equals(false),
           reason: "ids match but names differ");
       expect(
-          defaultEq.equal(
+          defaultEq.areEqual(
             Renamable.ofId("1", "Richard"),
             Renamable.ofId("2", "Richard"),
           ),
           equals(false),
           reason: "ids not equal");
       expect(
-          defaultEq.identical(
+          defaultEq.areIdentical(
             Renamable.ofId("1", "Richard"),
             Renamable.ofId("1", "Richard"),
           ),
@@ -163,25 +251,50 @@ void main() {
           reason: "should be equal");
 
       final rich = Renamable.ofId("1", "Richard");
-      expect(defaultEq.identical(rich, rich), equals(true), reason: "same identity");
+      expect(defaultEq.areIdentical(rich, rich), equals(true),
+          reason: "same identity");
     });
 
     test("Set diff - update item with alternate equality", () async {
-      final set1 = testSet(["Bob", "John", "Eric", "Richard", "James", "Lady", "Tramp", "Randy", "Donald"]);
+      final set1 = testSet([
+        "Bob",
+        "John",
+        "Eric",
+        "Richard",
+        "James",
+        "Lady",
+        "Tramp",
+        "Randy",
+        "Donald"
+      ]);
 
       final set2 = {...set1}
-        ..add(Renamable.ofId("1", "Robert")) // This one should look like a new item
-        ..add(Renamable.ofId("2", "John")); // This one should look like an update (no change)
+        ..add(Renamable.ofId(
+            "1", "Robert")) // This one should look like a new item
+        ..add(Renamable.ofId(
+            "2", "John")); // This one should look like an update (no change)
 
       // Using a more lenient match - the name and id must match to trigger a diff
-      final diff = set1.differences(set2, equality: DiffEquality(areIdentical: DefaultDiffEquality()));
+      final diff = set1.differences(set2,
+          equality: DiffEquality.ofEquality(DiffableEquality.equality));
       // EVen though we made two changes, only the one where the id changed should be reported
       expect(diff.length, equals(1));
-      expect(diff, hasAdd((diff) => diff.item.name == "Robert" && diff.item.id == "1"));
+      expect(diff,
+          hasAdd((diff) => diff.item.name == "Robert" && diff.item.id == "1"));
     });
   });
 }
 
 Set<Renamable> testSet(Iterable<String> names) {
-  return generateFromNames(["Bob", "John", "Eric", "Richard", "James", "Lady", "Tramp", "Randy", "Donald"]).toSet();
+  return generateFromNames([
+    "Bob",
+    "John",
+    "Eric",
+    "Richard",
+    "James",
+    "Lady",
+    "Tramp",
+    "Randy",
+    "Donald"
+  ]).toSet();
 }

@@ -6,6 +6,7 @@ abstract class Diffs<E, D extends Diff<E>> implements List<D> {}
 
 abstract class DiffArguments<E> {
   String get debugName;
+
   String get id;
 
   Iterable<E> get original;
@@ -15,6 +16,7 @@ abstract class DiffArguments<E> {
   final DiffEquality diffEquality;
 
   DiffArguments({DiffEquality diffEquality})
-      : diffEquality = diffEquality ?? DiffEquality();
+      : diffEquality = diffEquality ?? const DiffEquality();
+
   const DiffArguments.constant(this.diffEquality);
 }

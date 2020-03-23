@@ -1,6 +1,6 @@
 import 'package:collection/collection.dart';
+import 'package:collection_diff/collection_diff.dart';
 import 'package:collection_diff/diff_algorithm.dart';
-import 'package:collection_diff/diff_extensions.dart';
 import 'package:collection_diff/map_diff_model.dart';
 
 class DefaultMapDiffAlgorithm implements MapDiffAlgorithm {
@@ -22,19 +22,23 @@ class DefaultMapDiffAlgorithm implements MapDiffAlgorithm {
 
     if (oldIsEmpty) {
       return MapDiffs.ofOperations([
-        for (final entry in args.replacement.entries) MapDiff.set(args, entry.key, entry.value),
+        for (final entry in args.replacement.entries)
+          MapDiff.set(args, entry.key, entry.value),
       ], args);
     }
 
     if (newIsEmpty) {
       return MapDiffs.ofOperations([
-        for (final entry in args.original.entries) MapDiff.unset(args, entry.key, entry.value),
+        for (final entry in args.original.entries)
+          MapDiff.unset(args, entry.key, entry.value),
       ], args);
     }
 
     final checkValues = args.checkValues;
-    final currKeys = EqualitySet.from(args.keyEquality.areEqual, oldMap.keys);
-    final newKeys = EqualitySet.from(args.keyEquality.areEqual, newMap.keys);
+    final currKeys =
+        EqualitySet.from(args.keyEquality.asEquality(), oldMap.keys);
+    final newKeys =
+        EqualitySet.from(args.keyEquality.asEquality(), newMap.keys);
 
     final addedKeys = newKeys.difference(currKeys);
     final removedKeys = currKeys.difference(newKeys);
@@ -54,7 +58,7 @@ class DefaultMapDiffAlgorithm implements MapDiffAlgorithm {
       for (final matchingKey in sameKeys) {
         final oldItem = oldMap[matchingKey];
         final newItem = newMap[matchingKey];
-        if (!args.valueEquality.equal(oldItem, newItem)) {
+        if (!args.valueEquality.areEqual(oldItem, newItem)) {
           changes.add(MapDiff.change(args, matchingKey as K, newItem, oldItem));
         }
       }
