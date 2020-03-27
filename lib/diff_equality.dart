@@ -12,10 +12,8 @@ import 'package:collection/collection.dart';
 ///
 abstract class DiffEquality {
   const factory DiffEquality() = DiffableEquality;
-  const factory DiffEquality.ofEquality(
-      [Equality _identity, Equality _equality]) = _DiffEquality;
-  const factory DiffEquality.diffable(
-      {Equality fallbackIdentity, Equality fallbackEquals}) = DiffableEquality;
+  const factory DiffEquality.ofEquality([Equality _identity, Equality _equality]) = _DiffEquality;
+  const factory DiffEquality.diffable({Equality fallbackIdentity, Equality fallbackEquals}) = DiffableEquality;
 
   /// Whether the two items being compared have the same identity, for example two records with the same primary
   /// key.  This check is used to determine if an item should be removed or added to a list, rather than updated.
@@ -66,7 +64,10 @@ abstract class Diffable {
 }
 
 class _DiffDelegate implements DiffDelegate {
+  @override
   final dynamic diffKey;
+
+  @override
   final dynamic diffSource;
 
   const _DiffDelegate(this.diffKey, [dynamic diffSource])
@@ -90,17 +91,18 @@ class _DiffDelegate implements DiffDelegate {
 abstract class DiffDelegate implements Diffable {
   const DiffDelegate();
 
-  const factory DiffDelegate.of(dynamic diffKey, [dynamic diffSource]) =
-      _DiffDelegate;
+  const factory DiffDelegate.of(dynamic diffKey, [dynamic diffSource]) = _DiffDelegate;
 
   dynamic get diffKey;
 
   dynamic get diffSource;
 
+  @override
   bool diffEquals(dynamic other) {
     return diffSource == (other as DiffDelegate).diffSource;
   }
 
+  @override
   bool diffIdentical(dynamic other) {
     return diffKey == (other as DiffDelegate).diffKey;
   }
@@ -111,8 +113,10 @@ abstract class DiffDelegate implements Diffable {
 
 /// Mixin that converts an entity to DiffDelegate by using the existing hashCode and equals methods
 mixin DiffDelegateMixin implements DiffDelegate {
+  @override
   dynamic get diffKey;
 
+  @override
   dynamic get diffSource => this;
 
   @override
@@ -151,9 +155,7 @@ class DiffableEquality implements DiffEquality {
   final Equality fallbackEquals;
   final Equality fallbackIdentity;
 
-  const DiffableEquality(
-      {this.fallbackEquals = const Equality(),
-      this.fallbackIdentity = const Equality()})
+  const DiffableEquality({this.fallbackEquals = const Equality(), this.fallbackIdentity = const Equality()})
       : assert(fallbackEquals != null),
         assert(fallbackIdentity != null);
 
@@ -244,17 +246,12 @@ class EqualityFromDiffable implements Equality {
   final DiffEquality diffEquality;
   final bool isIdentity;
 
-  const EqualityFromDiffable.equals([this.diffEquality = const DiffEquality()])
-      : isIdentity = false;
+  const EqualityFromDiffable.equals([this.diffEquality = const DiffEquality()]) : isIdentity = false;
 
-  const EqualityFromDiffable.identity(
-      [this.diffEquality = const DiffEquality()])
-      : isIdentity = true;
+  const EqualityFromDiffable.identity([this.diffEquality = const DiffEquality()]) : isIdentity = true;
 
   @override
-  bool equals(e1, e2) => isIdentity
-      ? diffEquality.areIdentical(e1, e2)
-      : diffEquality.areEqual(e1, e2);
+  bool equals(e1, e2) => isIdentity ? diffEquality.areIdentical(e1, e2) : diffEquality.areEqual(e1, e2);
 
   @override
   int hash(e) => diffEquality.hash(e);
