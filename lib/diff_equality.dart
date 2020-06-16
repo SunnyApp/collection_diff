@@ -1,4 +1,7 @@
 import 'package:collection/collection.dart';
+import 'package:logging/logging.dart';
+
+final _log = Logger("diffEquality");
 
 /// Dart makes it difficult to pass function pointers across isolates.  [DiffEquality] provides a concrete implementation
 /// of equality comparators that can be used safely across isolate boundaries.
@@ -12,7 +15,9 @@ import 'package:collection/collection.dart';
 ///
 abstract class DiffEquality {
   const factory DiffEquality() = DiffableEquality;
+
   const factory DiffEquality.ofEquality([Equality _identity, Equality _equality]) = _DiffEquality;
+
   const factory DiffEquality.diffable({Equality fallbackIdentity, Equality fallbackEquals}) = DiffableEquality;
 
   /// Whether the two items being compared have the same identity, for example two records with the same primary
@@ -121,12 +126,20 @@ mixin DiffDelegateMixin implements DiffDelegate {
 
   @override
   bool diffEquals(dynamic other) {
-    return diffSource == (other as DiffDelegate).diffSource;
+    if (other == null) _log.warning("null value found during diff.  Source is ${this?.runtimeType ?? 'null'}");
+    if (other is DiffDelegate) {
+      return diffSource == other.diffSource;
+    }
+    return false;
   }
 
   @override
   bool diffIdentical(dynamic other) {
-    return diffKey == (other as DiffDelegate).diffKey;
+    if (other == null) _log.warning("null value found during diff.  Source is ${this?.runtimeType ?? 'null'}");
+    if (other is DiffDelegate) {
+      return diffKey == other.diffKey;
+    }
+    return false;
   }
 
   @override
@@ -194,6 +207,7 @@ class DiffableEquality implements DiffEquality {
 
 extension DiffEqualityExtension on DiffEquality {
   Equality asEquality() => EqualityFromDiffable.equals(this);
+
   Equality asIdentityEquality() => EqualityFromDiffable.identity(this);
 
   DiffComparison diffCompare(a, b) {

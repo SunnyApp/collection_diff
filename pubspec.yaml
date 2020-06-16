@@ -10,6 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   collection: ^1.14.11
+  logging: ^0.11.4
   uuid: ^2.0.4
 
 dev_dependencies:
