@@ -9,6 +9,8 @@ import 'list_diff_model.dart';
 import 'map_diff_model.dart';
 import 'set_diff_model.dart';
 
+void diffExtensions() {}
+
 extension ListDiffExt<E> on ListDiff<E> {
   InsertDiff<E> get insert => this as InsertDiff<E>;
 
