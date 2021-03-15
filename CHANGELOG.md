@@ -1,3 +1,6 @@
+## [2.0.3+4]
+ * null-safety
+
 ## [2.0.3+3]
  * Removing required keyword for constructors
 

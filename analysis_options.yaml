@@ -1,4 +1,4 @@
-include: package:sunny_dart/analysis_options.yaml
+include: package:dartxx/analysis_options.yaml
 analyzer:
   enable-experiment:
     - variance
