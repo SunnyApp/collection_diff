@@ -20,8 +20,7 @@ abstract class DiffEquality {
       [Equality? _identity, Equality? _equality]) = _DiffEquality;
 
   const factory DiffEquality.diffable(
-      {required Equality fallbackIdentity,
-      required Equality fallbackEquals}) = DiffableEquality;
+      {Equality fallbackIdentity, Equality fallbackEquals}) = DiffableEquality;
 
   /// Whether the two items being compared have the same identity, for example two records with the same primary
   /// key.  This check is used to determine if an item should be removed or added to a list, rather than updated.
