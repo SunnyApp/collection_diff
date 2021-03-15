@@ -1,3 +1,6 @@
+## [2.0.3+3]
+ * Removing required keyword for constructors
+
 ## [2.0.3+1]
  * Adding fastlane
 Updating version
