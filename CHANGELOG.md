@@ -1,3 +1,8 @@
+## [2.0.3+1]
+ * Adding fastlane
+Updating version
+null-safety
+
 ## [1.0.3] - Improving tests
 ## [1.0.2] - Updated badge
 ## [1.0.0] - Changed API surface - refactored DiffEquality
