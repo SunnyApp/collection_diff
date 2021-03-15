@@ -25,10 +25,11 @@ void setDiffTests() {
       ]);
       final set2 = {...set1}..removeWhere((r) => r.id == "1");
 
-      final diff = set1.differences(set2);
+      final diff = set1.differences(set2) as SetDiffs<Renamable>;
 
       expect(diff.length, equals(1));
-      expect(diff, hasRemove((remove) => remove.items.first.id == "1"));
+      expect(
+          diff, hasRemove<Renamable>((remove) => remove.items.first.id == "1"));
     });
 
     test("Set diff - remove all", () async {
@@ -45,7 +46,7 @@ void setDiffTests() {
       ]);
       final set2 = <Renamable>{};
 
-      final diff = set1.differences(set2);
+      final diff = set1.differences(set2) as SetDiffs<Renamable>;
 
       expect(diff.length, equals(1));
       expect(diff, hasRemove((remove) => remove.items.length == 9));
@@ -65,7 +66,7 @@ void setDiffTests() {
         "Donald"
       ]);
 
-      final diff = set1.differences(set2);
+      final diff = set1.differences(set2) as SetDiffs<Renamable>;
 
       expect(diff.length, equals(1));
       expect(diff, hasAdd((add) => add.items.length == 9));
@@ -84,10 +85,10 @@ void setDiffTests() {
         "Donald"
       ]);
       final set2 = {...set1}..add(Renamable("Kevin"));
-      final diff = set1.differences(set2);
+      final diff = set1.differences(set2) as SetDiffs<Renamable>;
 
-      expect(diff, hasAdd((add) {
-        return add.item.name == "Kevin";
+      expect(diff, hasAdd<Renamable>((add) {
+        return add.item?.name == "Kevin";
       }));
       expect(diff.length, equals(1));
     });
@@ -107,7 +108,7 @@ void setDiffTests() {
       final set2 = {...set1};
       set2.where((i) => i.id == "1").forEach((i) => i.name = "Robert");
 
-      final diff = set1.differences(set2);
+      final diff = set1.differences(set2) as SetDiffs<Renamable>;
       expect(diff.length, equals(0));
     });
 
@@ -126,7 +127,7 @@ void setDiffTests() {
       final set2 = set1;
       set1.remove(set1.first);
 
-      final diff = set1.differences(set2);
+      final diff = set1.differences(set2) as SetDiffs<Renamable>;
       expect(diff.length, equals(0));
     });
 
@@ -148,8 +149,8 @@ void setDiffTests() {
         ..removeWhere((n) => n.id == "1")
         ..add(Renamable.ofId("1", "Robert"));
 
-      final diff = set1.differences(set2);
-      expect(diff, hasUpdate((diff) {
+      final diff = set1.differences(set2) as SetDiffs<Renamable>;
+      expect(diff, hasUpdate<Renamable>((diff) {
         return diff.oldValue.id == "1" &&
             diff.oldValue.name == "Bob" &&
             diff.newValue.id == "1" &&
@@ -175,9 +176,9 @@ void setDiffTests() {
       // so the target set will have an extra item, even though the diff reports them as being the same...
       final set2 = {...set1}..add(Renamable.ofId("1", "Robert"));
 
-      final diff = set1.differences(set2);
+      final diff = set1.differences(set2) as SetDiffs<Renamable>;
       expect(diff.length, equals(1));
-      expect(diff, hasUpdate((diff) {
+      expect(diff, hasUpdate<Renamable>((diff) {
         return diff.newValue.id == "1" && diff.newValue.name == "Robert";
       }));
     });
@@ -276,11 +277,14 @@ void setDiffTests() {
 
       // Using a more lenient match - the name and id must match to trigger a diff
       final diff = set1.differences(set2,
-          equality: DiffEquality.ofEquality(DiffableEquality.equality));
+              equality: DiffEquality.ofEquality(DiffableEquality.equality))
+          as SetDiffs<Renamable>;
       // EVen though we made two changes, only the one where the id changed should be reported
       expect(diff.length, equals(1));
-      expect(diff,
-          hasAdd((diff) => diff.item.name == "Robert" && diff.item.id == "1"));
+      expect(
+          diff,
+          hasAdd<Renamable>(
+              (diff) => diff.item?.name == "Robert" && diff.item?.id == "1"));
     });
   });
 }

@@ -4,21 +4,23 @@ version: 1.0.3
 homepage: https://github.com/SunnyApp/collection_diff
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: '>=2.12.0 <3.0.0'
 
 dependencies:
   flutter_test:
     sdk: flutter
   flutter:
     sdk: flutter
-  collection: ^1.14.13
-  logging: ^0.11.4
-  uuid: ^2.2.2
+  collection: ^1.15.0
+  logging: ^1.0.0
+  uuid: ^3.0.1
 
 dev_dependencies:
-  sunny_dart: ^0.5.8+2
-  coveralls: <5.7.0
+  sunny_dart: ^0.8.0+7
+  coveralls: ^5.10.0
 
+dependency_overrides:
+  crypto: 3.0.0
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

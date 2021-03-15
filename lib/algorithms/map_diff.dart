@@ -5,7 +5,7 @@ import 'package:collection_diff/map_diff_model.dart';
 
 class DefaultMapDiffAlgorithm implements MapDiffAlgorithm {
   @override
-  MapDiffs<K, V> execute<K extends Object, V>(MapDiffArguments<K, V> args) {
+  MapDiffs<K, V> execute<K, V>(MapDiffArguments<K, V> args) {
     final oldMap = args.original;
     final newMap = args.replacement;
 

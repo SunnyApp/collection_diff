@@ -14,7 +14,7 @@ class DefaultSetDiffAlgorithm implements SetDiffAlgorithm {
 
     /// We reverse the source list here because it's possible that the identity algorithm is less strict
     /// than the rules for the originating set, and if there are duplicates, we want to keep the last one
-    /// inserted.  Of course, this assumes an ordered insertion set li
+    /// inserted.  Of course, this assumes an ordered insertion set list
     final oldSet = EqualitySet.from(args.diffEquality.asIdentityEquality(),
         args.original.toList().reversed);
     final newSet = EqualitySet.from(args.diffEquality.asIdentityEquality(),
@@ -23,7 +23,7 @@ class DefaultSetDiffAlgorithm implements SetDiffAlgorithm {
     final removes = oldSet.difference(newSet);
     final adds = newSet.difference(oldSet);
 
-    final updates = <SetDiff<E>>[];
+    final List<SetDiff<E>> updates = <SetDiff<E>>[];
     if (args.isCheckEquality == true) {
       final map = EqualityMap(args.diffEquality.asIdentityEquality());
 
