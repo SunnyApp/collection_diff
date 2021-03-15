@@ -63,7 +63,7 @@ class UpdateDiff<E> extends SetDiff<E> {
       : super(args, SetDiffType.update);
 
   @override
-  Set<E> get items => {newValue};
+  Set<E> get items => {if (newValue != null) newValue!};
 
   @override
   UpdateDiff<R> recast<R>(SetDiffArguments<R> args) {
