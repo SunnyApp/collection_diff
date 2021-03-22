@@ -1,3 +1,7 @@
+## [2.0.3+6]
+ * Updated fastlane
+pub upgrade
+
 ## [2.0.3+4]
  * null-safety
 

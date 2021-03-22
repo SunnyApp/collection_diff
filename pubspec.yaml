@@ -1,5 +1,5 @@
 name: collection_diff
-version: 2.0.3+5
+version: 2.0.3+6
 homepage: https://github.com/SunnyApp/collection_diff
 description: A dart library that compares collections and returns the differences as a set of operations.
 environment: 
