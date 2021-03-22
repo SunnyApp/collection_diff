@@ -8,10 +8,10 @@ dependencies:
   crypto: ^3.0.0
   collection: ^1.15.0
   logging: ^1.0.0
-  uuid: ^3.0.1
+  uuid: ^3.0.2
   flutter_test: 
     sdk: flutter
   flutter: 
     sdk: flutter
 dev_dependencies: 
-  dartxx: any
+  dartxx: ^0.5.0+1
