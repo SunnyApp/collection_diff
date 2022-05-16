@@ -5,13 +5,14 @@ description: A dart library that compares collections and returns the difference
 environment: 
   sdk: '>=2.12.0 <3.0.0'
 dependencies: 
-  crypto: ^3.0.0
-  collection: ^1.15.0
-  logging: ^1.0.0
+  crypto: ^3.0.2
+  collection: ^1.16.0
+  logging: ^1.0.2
   uuid: ^3.0.2
   flutter_test: 
     sdk: flutter
   flutter: 
     sdk: flutter
 dev_dependencies: 
-  dartxx: ^0.5.0+1
+  dartxx: 
+    path: /Users/ericm/sunny/player_rank/packages/dartxx
