@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:collection_diff/algorithms/utils.dart';
 import 'package:collection_diff/collection_diff.dart';
 import 'package:collection_diff/diff_algorithm.dart';
 import 'package:collection_diff/list_diff_model.dart';

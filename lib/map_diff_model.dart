@@ -33,8 +33,10 @@ class MapDiff<K, V> {
     return "${this.runtimeType} type: $type, key: $key, value: $value";
   }
 
-  MapDiff<KK, VV> recast<KK, VV>(MapDiffArguments<KK, VV> args) {
-    return MapDiff(args, this.type, key as KK, value as VV?, oldValue as VV?);
+  MapDiff<KK, VV> recast<KK, VV>([MapDiffArguments<KK, VV>? args]) {
+    final newArgs = args ?? this.args.recast<KK, VV>();
+    return MapDiff(
+        newArgs, this.type, key as KK, value as VV?, oldValue as VV?);
   }
 }
 
@@ -81,6 +83,28 @@ class MapDiffArguments<K, V> {
 
   @override
   int get hashCode => id.hashCode;
+
+  MapDiffArguments<KK, VV> recast<KK, VV>() {
+    return MapDiffArguments<KK, VV>._(
+      original: original.cast(),
+      replacement: replacement.cast(),
+      keyEquality: keyEquality,
+      valueEquality: valueEquality,
+      checkValues: checkValues,
+      debugName: debugName,
+      id: id,
+    );
+  }
+
+  const MapDiffArguments._({
+    required this.original,
+    required this.replacement,
+    required this.keyEquality,
+    required this.valueEquality,
+    required this.checkValues,
+    this.debugName,
+    required this.id,
+  });
 }
 
 class MapDiffs<K, V> extends DelegatingList<MapDiff<K, V>> {

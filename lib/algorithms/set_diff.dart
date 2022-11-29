@@ -1,8 +1,6 @@
 import 'package:collection/collection.dart';
-import 'package:collection_diff/algorithms/utils.dart';
 import 'package:collection_diff/diff_algorithm.dart';
 import 'package:collection_diff/set_diff.dart';
-import 'package:collection_diff/set_diff_model.dart';
 
 class DefaultSetDiffAlgorithm implements SetDiffAlgorithm {
   @override
