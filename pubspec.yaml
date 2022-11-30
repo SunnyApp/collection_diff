@@ -15,4 +15,6 @@ dependencies:
     sdk: flutter
 dev_dependencies: 
   dartxx: 
-    path: /Users/ericm/sunny/trippi_plugins/dartxx
+    git: 
+      url: git@github.com:ericmartineau/dartxx.git
+      ref: trippi_app
