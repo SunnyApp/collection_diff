@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart' show IterableExtension;
 import 'package:collection_diff/algorithms/map_diff.dart';
 import 'package:collection_diff/algorithms/myers.dart';
 import 'package:collection_diff/algorithms/set_diff.dart';
@@ -20,7 +21,7 @@ extension ListDiffExt<E> on ListDiff<E> {
 
   Iterable<int> get indexes sync* {
     for (int i = 0; i < this.size; i++) {
-      yield this.index + i;
+      yield this.index! + i;
     }
   }
 }
@@ -39,20 +40,20 @@ extension ListDiffsExt<E> on ListDiffs<E> {
 }
 
 extension SetDiffExt<E> on SetDiff<E> {
-  E get item => items.firstWhere((_) => true, orElse: () => null);
+  E? get item => items.firstWhereOrNull((_) => true);
 }
 
 extension ListDiffItemExt<E> on InsertDiff<E> {
-  E get item {
-    return items.firstWhere((_) => true, orElse: () => null);
+  E? get item {
+    return items.firstWhereOrNull((_) => true);
   }
 }
 
 extension ListDiffExtensions<E> on List<E> {
   ListDiffs<E> differences(List<E> other,
       {bool identityOnly = true,
-      DiffEquality equality,
-      ListDiffAlgorithm algorithm}) {
+      DiffEquality? equality,
+      ListDiffAlgorithm? algorithm}) {
     algorithm ??= MyersDiff(identityOnly);
     return algorithm.execute(ListDiffArguments(this, other, equality));
   }
@@ -68,13 +69,13 @@ extension MapDiffExtensions<K, V> on Map<K, V> {
   MapDiffs<K, V> differences(
     Map<K, V> other, {
     bool checkValues = true,
-    DiffEquality keyEquality,
-    DiffEquality valueEquality,
-    MapDiffAlgorithm algorithm,
+    DiffEquality? keyEquality,
+    DiffEquality? valueEquality,
+    MapDiffAlgorithm? algorithm,
   }) {
     algorithm ??= const DefaultMapDiffAlgorithm();
     return algorithm.execute(MapDiffArguments(this, other,
-        checkValues: checkValues ?? true,
+        checkValues: checkValues,
         keyEquality: keyEquality,
         valueEquality: valueEquality));
   }
@@ -82,7 +83,7 @@ extension MapDiffExtensions<K, V> on Map<K, V> {
 
 extension SetDiffExtensions<E> on Set<E> {
   SetDiffs<E> differences(Set<E> other,
-      {bool checkEquality = true, DiffEquality equality, String debugName}) {
+      {bool checkEquality = true, DiffEquality? equality, String? debugName}) {
     const algorithm = DefaultSetDiffAlgorithm();
     return algorithm
         .execute(SetDiffArguments(this, other, checkEquality, equality));

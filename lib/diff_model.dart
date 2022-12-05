@@ -5,7 +5,7 @@ abstract class Diff<E> {}
 abstract class Diffs<E, D extends Diff<E>> implements List<D> {}
 
 abstract class DiffArguments<E> {
-  String get debugName;
+  String? get debugName;
 
   String get id;
 
@@ -15,7 +15,7 @@ abstract class DiffArguments<E> {
 
   final DiffEquality diffEquality;
 
-  DiffArguments({DiffEquality diffEquality})
+  DiffArguments({DiffEquality? diffEquality})
       : diffEquality = diffEquality ?? const DiffEquality();
 
   const DiffArguments.constant(this.diffEquality);

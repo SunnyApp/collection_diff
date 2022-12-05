@@ -23,7 +23,7 @@ abstract class SetDiffAlgorithm {
 }
 
 abstract class MapDiffAlgorithm {
-  MapDiffs<K, V> execute<K extends Object, V>(MapDiffArguments<K, V> args);
+  MapDiffs<K, V> execute<K, V>(MapDiffArguments<K, V> args);
 
   static const sets = DefaultMapDiffAlgorithm();
 }

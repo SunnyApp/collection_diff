@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:collection_diff/algorithms/utils.dart';
 import 'package:collection_diff/collection_diff.dart';
 import 'package:collection_diff/diff_algorithm.dart';
 import 'package:collection_diff/list_diff_model.dart';
@@ -10,7 +9,7 @@ class WagnerFischerDiff implements ListDiffAlgorithm {
   const WagnerFischerDiff({this.isIdentityOnly = true});
 
   @override
-  ListDiffs<E> execute<E extends Object>(final ListDiffArguments<E> args) {
+  ListDiffs<E> execute<E>(final ListDiffArguments<E> args) {
     final original = args.original;
     final replacement = args.replacement;
 
@@ -57,14 +56,14 @@ class WagnerFischerDiff implements ListDiffAlgorithm {
   }
 
   @override
-  ListDiffAlgorithm withIdentityOnly(bool isIdentityOnly) {
+  ListDiffAlgorithm withIdentityOnly(bool? isIdentityOnly) {
     return WagnerFischerDiff(isIdentityOnly: isIdentityOnly ?? true);
   }
 }
 
 // We can adapt the algorithm to use less space, O(m) instead of O(mn),
 // since it only requires that the previous row and current row be stored at any one time
-class Row<E extends Object> {
+class Row<E> {
   /// Each slot is a collection of Change
   List<ListDiffs<E>> slots = [];
   ListDiffArguments<E> args;
@@ -76,7 +75,8 @@ class Row<E extends Object> {
 
   /// Seed with .insert from new
   void seed(List<E> seedArray) {
-    slots = List<ListDiffs<E>>.generate(seedArray.length + 1, (_) => ListDiffs.builder(args));
+    slots = List<ListDiffs<E>>.generate(
+        seedArray.length + 1, (_) => ListDiffs.builder(args));
     // Each slot increases in the number of changes
     var index = 0;
     seedArray.forEach((item) {
@@ -91,10 +91,10 @@ class Row<E extends Object> {
 
   /// Reset with empty slots
   /// First slot is .delete
-  void reset({int count, int indexInOld, E oldItem}) {
+  void reset({int? count, int? indexInOld, E? oldItem}) {
     if (slots.isNotEmpty != true) {
       slots = <ListDiffs<E>>[];
-      for (var x = 0; x < count; x++) {
+      for (var x = 0; x < count!; x++) {
         /// Add old/new
         slots.add(ListDiffs.builder(args));
       }
@@ -107,19 +107,25 @@ class Row<E extends Object> {
   }
 
   /// Use .replace from previousRow
-  void update({int indexInNew, Row<E> previousRow}) {
+  void update({required int indexInNew, required Row<E> previousRow}) {
     final slotIndex = indexInNew + 1;
     slots[slotIndex] = previousRow.slots[slotIndex - 1];
   }
 
   /// Choose the min
-  void updateWithMin({Row<E> previousRow, int indexInNew, E newItem, int indexInOld, E oldItem}) {
+  void updateWithMin(
+      {required Row<E> previousRow,
+      required int indexInNew,
+      E? newItem,
+      int? indexInOld,
+      E? oldItem}) {
     final slotIndex = indexInNew + 1;
     final topSlot = previousRow.slots[slotIndex];
     final leftSlot = slots[slotIndex - 1];
     final topLeftSlot = previousRow.slots[slotIndex - 1];
 
-    final minCount = min(min(topSlot.length, leftSlot.length), topLeftSlot.length);
+    final minCount =
+        min(min(topSlot.length, leftSlot.length), topLeftSlot.length);
 
     // Order of cases does not matter
 
@@ -131,12 +137,14 @@ class Row<E extends Object> {
     } else if (minCount == leftSlot.length) {
       slots[slotIndex] = combine(
         slot: leftSlot,
-        change: InsertDiff<E>(args, indexInNew, 1, [newItem]),
+        change:
+            InsertDiff<E>(args, indexInNew, 1, [if (newItem != null) newItem]),
       );
     } else if (minCount == topLeftSlot.length) {
       slots[slotIndex] = combine(
         slot: topLeftSlot,
-        change: ReplaceDiff(args, indexInNew, 1, [newItem]),
+        change:
+            ReplaceDiff(args, indexInNew, 1, [if (newItem != null) newItem]),
       );
     } else {
       throw "Bad algorithm.  Please try again";
@@ -144,8 +152,9 @@ class Row<E extends Object> {
   }
 
   /// Add one more change
-  ListDiffs<E> combine({ListDiffs<E> slot, ListDiff<E> change}) {
-    return ListDiffs<E>.ofOperations([...slot, change].toList(growable: false), args);
+  ListDiffs<E> combine({required ListDiffs<E> slot, ListDiff<E>? change}) {
+    return ListDiffs<E>.ofOperations(
+        [...slot, if (change != null) change].toList(growable: false), args);
   }
 
   //// Last slot

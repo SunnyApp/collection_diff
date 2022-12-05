@@ -35,7 +35,7 @@ void wfgerDiffTests() {
 }
 
 void _listDiffTests(String algorithmName, ListDiffAlgorithm algorithm,
-    [void moreTests()]) {
+    [void moreTests()?]) {
   group("listDiff - $algorithmName", () {
     setUp(() {
       increment = 1;
@@ -49,7 +49,7 @@ void _listDiffTests(String algorithmName, ListDiffAlgorithm algorithm,
 
       final diff = list1.differences(list2, algorithm: algorithm);
       expect(diff.length, equals(1));
-      final result = diff.first;
+      final ListDiff<int> result = diff.first;
       expect(result is InsertDiff, isTrue);
       expect(result.insert.index, equals(4));
     });

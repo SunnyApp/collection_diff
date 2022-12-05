@@ -16,9 +16,11 @@ final _log = Logger("diffEquality");
 abstract class DiffEquality {
   const factory DiffEquality() = DiffableEquality;
 
-  const factory DiffEquality.ofEquality([Equality _identity, Equality _equality]) = _DiffEquality;
+  const factory DiffEquality.ofEquality(
+      [Equality? _identity, Equality? _equality]) = _DiffEquality;
 
-  const factory DiffEquality.diffable({Equality fallbackIdentity, Equality fallbackEquals}) = DiffableEquality;
+  const factory DiffEquality.diffable(
+      {Equality fallbackIdentity, Equality fallbackEquals}) = DiffableEquality;
 
   /// Whether the two items being compared have the same identity, for example two records with the same primary
   /// key.  This check is used to determine if an item should be removed or added to a list, rather than updated.
@@ -37,12 +39,12 @@ enum DiffComparison { equal, identicalNotEqual, notIdentical }
 
 /// Default implementation that uses [Equality] instance behind the scenes.
 class _DiffEquality implements DiffEquality {
-  const _DiffEquality([Equality identity, Equality equality])
+  const _DiffEquality([Equality? identity, Equality? equality])
       : _identity = identity ?? DiffableEquality.identityEquality,
         _equality = equality ?? identity ?? DiffableEquality.equality;
 
   final Equality _identity;
-  final Equality _equality;
+  final Equality? _equality;
 
   @override
   bool areEqual(a, b) => (_equality ?? _identity).equals(a, b);
@@ -96,7 +98,8 @@ class _DiffDelegate implements DiffDelegate {
 abstract class DiffDelegate implements Diffable {
   const DiffDelegate();
 
-  const factory DiffDelegate.of(dynamic diffKey, [dynamic diffSource]) = _DiffDelegate;
+  const factory DiffDelegate.of(dynamic diffKey, [dynamic diffSource]) =
+      _DiffDelegate;
 
   dynamic get diffKey;
 
@@ -126,7 +129,9 @@ mixin DiffDelegateMixin implements DiffDelegate {
 
   @override
   bool diffEquals(dynamic other) {
-    if (other == null) _log.warning("null value found during diff.  Source is ${this?.runtimeType ?? 'null'}");
+    if (other == null)
+      _log.warning(
+          "null value found during diff.  Source is ${this.runtimeType}");
     if (other is DiffDelegate) {
       return diffSource == other.diffSource;
     }
@@ -135,7 +140,9 @@ mixin DiffDelegateMixin implements DiffDelegate {
 
   @override
   bool diffIdentical(dynamic other) {
-    if (other == null) _log.warning("null value found during diff.  Source is ${this?.runtimeType ?? 'null'}");
+    if (other == null)
+      _log.warning(
+          "null value found during diff.  Source is ${this.runtimeType}");
     if (other is DiffDelegate) {
       return diffKey == other.diffKey;
     }
@@ -168,9 +175,9 @@ class DiffableEquality implements DiffEquality {
   final Equality fallbackEquals;
   final Equality fallbackIdentity;
 
-  const DiffableEquality({this.fallbackEquals = const Equality(), this.fallbackIdentity = const Equality()})
-      : assert(fallbackEquals != null),
-        assert(fallbackIdentity != null);
+  const DiffableEquality(
+      {this.fallbackEquals = const Equality(),
+      this.fallbackIdentity = const Equality()});
 
   @override
   int hash(e) {
@@ -221,7 +228,7 @@ extension DiffEqualityExtension on DiffEquality {
   }
 }
 
-extension DiffableExtension on DiffDelegate {
+extension DiffableExtension on DiffDelegate? {
   /// A complex class might implement DiffDelegate, this copies values into a simple implementation so it
   /// can more easily cross isolate boundaries
   DiffDelegate get delegate {
@@ -260,16 +267,21 @@ class EqualityFromDiffable implements Equality {
   final DiffEquality diffEquality;
   final bool isIdentity;
 
-  const EqualityFromDiffable.equals([this.diffEquality = const DiffEquality()]) : isIdentity = false;
+  const EqualityFromDiffable.equals([this.diffEquality = const DiffEquality()])
+      : isIdentity = false;
 
-  const EqualityFromDiffable.identity([this.diffEquality = const DiffEquality()]) : isIdentity = true;
+  const EqualityFromDiffable.identity(
+      [this.diffEquality = const DiffEquality()])
+      : isIdentity = true;
 
   @override
-  bool equals(e1, e2) => isIdentity ? diffEquality.areIdentical(e1, e2) : diffEquality.areEqual(e1, e2);
+  bool equals(e1, e2) => isIdentity
+      ? diffEquality.areIdentical(e1, e2)
+      : diffEquality.areEqual(e1, e2);
 
   @override
   int hash(e) => diffEquality.hash(e);
 
   @override
-  bool isValidKey(Object e) => true;
+  bool isValidKey(Object? e) => true;
 }
