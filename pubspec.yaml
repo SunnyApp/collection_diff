@@ -15,4 +15,4 @@ dependencies:
     sdk: flutter
 dev_dependencies: 
   dartxx: 
-    path: /Users/ericm/sunny/trippi_plugins/dartxx
+    path: /Users/ericm/sunny/local_plugins/dartxx

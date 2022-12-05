@@ -46,8 +46,8 @@ packages:
   dartxx:
     dependency: "direct dev"
     description:
-      path: "../dartxx"
-      relative: true
+      path: "/Users/ericm/sunny/local_plugins/dartxx"
+      relative: false
     source: path
     version: "0.5.5"
   equatable:
