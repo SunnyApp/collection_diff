@@ -1,26 +1,19 @@
 name: collection_diff
-description: A dart library that compares collections and returns the differences as a set of operations.
 version: 1.0.3
 homepage: https://github.com/SunnyApp/collection_diff
-
-environment:
-  sdk: ">=2.7.0 <3.0.0"
-
-dependencies:
-  flutter_test:
+description: A dart library that compares collections and returns the differences as a set of operations.
+environment: 
+  sdk: '>=2.7.0 <3.0.0'
+dependencies: 
+  collection: ^1.16.0
+  logging: ^1.0.2
+  uuid: ^3.0.6
+  flutter_test: 
     sdk: flutter
-  flutter:
+  flutter: 
     sdk: flutter
-  collection: ^1.14.13
-  logging: ^0.11.4
-  uuid: ^2.2.2
-
-dev_dependencies:
-  sunny_dart: ^0.5.8+2
-  coveralls: <5.7.0
-
-# For information on the generic Dart part of this file, see the
-# following page: https://dart.dev/tools/pub/pubspec
-
-# The following section is specific to Flutter.
-flutter:
+dev_dependencies: 
+  coveralls: '<5.7.0'
+  sunny_dart: 
+    path: /Users/ericm/reliveit/checkout/SunnyApp/sunny_dart
+flutter: null
