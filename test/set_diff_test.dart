@@ -28,7 +28,8 @@ void setDiffTests() {
       final diff = set1.differences(set2);
 
       expect(diff.length, equals(1));
-      expect(diff, hasRemove((remove) => remove.items.first.id == "1"));
+      expect(
+          diff, hasRemove<Renamable>((remove) => remove.items.first.id == "1"));
     });
 
     test("Set diff - remove all", () async {
@@ -86,8 +87,8 @@ void setDiffTests() {
       final set2 = {...set1}..add(Renamable("Kevin"));
       final diff = set1.differences(set2);
 
-      expect(diff, hasAdd((add) {
-        return add.item.name == "Kevin";
+      expect(diff, hasAdd<Renamable>((add) {
+        return add.item?.name == "Kevin";
       }));
       expect(diff.length, equals(1));
     });
@@ -149,7 +150,7 @@ void setDiffTests() {
         ..add(Renamable.ofId("1", "Robert"));
 
       final diff = set1.differences(set2);
-      expect(diff, hasUpdate((diff) {
+      expect(diff, hasUpdate<Renamable>((diff) {
         return diff.oldValue.id == "1" &&
             diff.oldValue.name == "Bob" &&
             diff.newValue.id == "1" &&
@@ -177,7 +178,7 @@ void setDiffTests() {
 
       final diff = set1.differences(set2);
       expect(diff.length, equals(1));
-      expect(diff, hasUpdate((diff) {
+      expect(diff, hasUpdate<Renamable>((diff) {
         return diff.newValue.id == "1" && diff.newValue.name == "Robert";
       }));
     });
@@ -279,8 +280,10 @@ void setDiffTests() {
           equality: DiffEquality.ofEquality(DiffableEquality.equality));
       // EVen though we made two changes, only the one where the id changed should be reported
       expect(diff.length, equals(1));
-      expect(diff,
-          hasAdd((diff) => diff.item.name == "Robert" && diff.item.id == "1"));
+      expect(
+          diff,
+          hasAdd<Renamable>(
+              (diff) => diff.item?.name == "Robert" && diff.item?.id == "1"));
     });
   });
 }

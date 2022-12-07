@@ -6,31 +6,26 @@ enum MapDiffType { unset, change, set }
 
 class MapDiff<K, V> {
   final K key;
-  final V value;
-  final V oldValue;
+  final V? value;
+  final V? oldValue;
   final MapDiffType type;
   final MapDiffArguments<K, V> args;
 
   const MapDiff(this.args, this.type, this.key, this.value, this.oldValue)
-      : assert(type != null),
-        assert(args != null),
-        assert(key != null);
+      : assert(key != null);
 
   const MapDiff.set(this.args, this.key, this.value)
       : type = MapDiffType.set,
         oldValue = null,
-        assert(args != null),
         assert(key != null);
 
   const MapDiff.unset(this.args, this.key, this.oldValue)
       : type = MapDiffType.unset,
         value = null,
-        assert(args != null),
         assert(key != null);
 
   const MapDiff.change(this.args, this.key, this.value, this.oldValue)
       : type = MapDiffType.change,
-        assert(args != null),
         assert(key != null);
 
   @override
@@ -38,8 +33,10 @@ class MapDiff<K, V> {
     return "${this.runtimeType} type: $type, key: $key, value: $value";
   }
 
-  MapDiff<KK, VV> recast<KK, VV>(MapDiffArguments<KK, VV> args) {
-    return MapDiff(args, this.type, key as KK, value as VV, oldValue as VV);
+  MapDiff<KK, VV> recast<KK, VV>([MapDiffArguments<KK, VV>? args]) {
+    final newArgs = args ?? this.args.recast<KK, VV>();
+    return MapDiff(
+        newArgs, this.type, key as KK, value as VV?, oldValue as VV?);
   }
 }
 
@@ -49,30 +46,28 @@ class MapDiffArguments<K, V> {
   final DiffEquality keyEquality;
   final DiffEquality valueEquality;
   final bool checkValues;
-  final String debugName;
+  final String? debugName;
   final String id;
 
   MapDiffArguments(this.original, this.replacement,
-      {bool checkValues,
-      DiffEquality keyEquality,
-      DiffEquality valueEquality,
+      {bool? checkValues,
+      DiffEquality? keyEquality,
+      DiffEquality? valueEquality,
       this.debugName,
-      String id})
+      String? id})
       : id = id ?? Uuid().v4(),
-        assert(original != null),
-        assert(replacement != null),
         checkValues = checkValues ?? true,
         keyEquality = keyEquality ?? DiffEquality(),
         valueEquality = valueEquality ?? DiffEquality();
 
   /// Performs a defensive copy of the input maps in case they are not safe for crossing isolate boundaries
   MapDiffArguments.copied(Map<K, V> original, Map<K, V> replacement,
-      {String debugName,
-      String id,
+      {String? debugName,
+      String? id,
       bool checkValues = true,
-      DiffEquality keyEquality,
-      DiffEquality valueEquality})
-      : this({...?original}, {...?replacement},
+      DiffEquality? keyEquality,
+      DiffEquality? valueEquality})
+      : this({...original}, {...replacement},
             checkValues: checkValues,
             keyEquality: keyEquality,
             valueEquality: valueEquality,
@@ -88,6 +83,28 @@ class MapDiffArguments<K, V> {
 
   @override
   int get hashCode => id.hashCode;
+
+  MapDiffArguments<KK, VV> recast<KK, VV>() {
+    return MapDiffArguments<KK, VV>._(
+      original: original.cast(),
+      replacement: replacement.cast(),
+      keyEquality: keyEquality,
+      valueEquality: valueEquality,
+      checkValues: checkValues,
+      debugName: debugName,
+      id: id,
+    );
+  }
+
+  const MapDiffArguments._({
+    required this.original,
+    required this.replacement,
+    required this.keyEquality,
+    required this.valueEquality,
+    required this.checkValues,
+    this.debugName,
+    required this.id,
+  });
 }
 
 class MapDiffs<K, V> extends DelegatingList<MapDiff<K, V>> {
@@ -101,10 +118,10 @@ class MapDiffs<K, V> extends DelegatingList<MapDiff<K, V>> {
   MapDiffs.ofOperations(this.operations, this.args) : super(operations);
 
   MapDiffs.builder(Map<K, V> source,
-      {Map<K, V> replacement,
-      bool checkValues,
-      DiffEquality keyEquality,
-      DiffEquality valueEquality})
+      {Map<K, V>? replacement,
+      bool? checkValues,
+      DiffEquality? keyEquality,
+      DiffEquality? valueEquality})
       : this.ofOperations(
           <MapDiff<K, V>>[],
           MapDiffArguments(source, replacement ?? source,

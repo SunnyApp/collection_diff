@@ -2,7 +2,7 @@ import 'package:collection_diff/list_diff_model.dart';
 import 'package:collection_diff/set_diff_model.dart';
 
 /// Looks for empty lists, which may signal an easier diff operation
-ListDiffs<T> preprocessListDiff<T>(ListDiffArguments<T> args) {
+ListDiffs<T>? preprocessListDiff<T>(ListDiffArguments<T> args) {
   final oldIsEmpty = args.original.isEmpty;
   final newIsEmpty = args.replacement.isEmpty;
 
@@ -23,7 +23,7 @@ ListDiffs<T> preprocessListDiff<T>(ListDiffArguments<T> args) {
   return null;
 }
 
-SetDiffs<T> preprocessSetDiff<T>(SetDiffArguments<T> args) {
+SetDiffs<T>? preprocessSetDiff<T>(SetDiffArguments<T> args) {
   final oldIsEmpty = args.original.isEmpty;
   final newIsEmpty = args.replacement.isEmpty;
 

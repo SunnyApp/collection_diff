@@ -1,1 +1,26 @@
-include: package:sunny_dart/analysis_options.yaml
+include: package:dartxx/analysis_options.yaml
+
+analyzer:
+  exclude:
+    - "android/**"
+    - "ios/**"
+    - "macos/**"
+    - ".fvm/**"
+    - "current/**"
+    - "bin/cache/**"
+    - "build/**"
+    - "lib/l10n/*.p.dart"
+    - ".idea/**"
+    - ".direnv/**"
+    - "fastlane/**"
+    - "test_driver/**"
+  enable-experiment:
+    - variance
+  errors:
+    annotate_overrides: info
+    always_declare_return_types: info
+
+linter:
+  rules:
+    annotate_overrides: info
+    always_declare_return_types: info
