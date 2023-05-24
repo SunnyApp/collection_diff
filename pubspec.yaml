@@ -6,13 +6,13 @@ environment:
   sdk: '>=2.17.0 <3.0.0'
 dependencies: 
   crypto: ^3.0.2
-  collection: ^1.16.0
-  logging: ^1.0.2
-  uuid: ^3.0.6
+  collection: ^1.17.1
+  logging: ^1.1.1
+  uuid: ^3.0.0
   flutter_test: 
     sdk: flutter
   flutter: 
     sdk: flutter
 dev_dependencies: 
   dartxx: 
-    path: /Users/ericm/sunny/local_plugins/dartxx
+    path: /Users/ericm/reliveit/checkout/ericmartineau/dartxx
